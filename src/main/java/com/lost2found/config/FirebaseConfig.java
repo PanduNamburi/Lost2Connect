@@ -13,10 +13,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  * Configuration for Firebase Admin SDK & Firestore database client.
+ * Supports loading credentials via Environment Variables (FIREBASE_SERVICE_ACCOUNT_JSON / FIREBASE_CREDENTIALS_BASE64)
+ * or local serviceAccountKey.json file.
  */
 @Configuration
 public class FirebaseConfig {
@@ -28,7 +33,7 @@ public class FirebaseConfig {
     @Value("${app.firebase.config-path:classpath:serviceAccountKey.json}")
     private String configPath;
 
-    @Value("${app.firebase.project-id:lost2found-app}")
+    @Value("${app.firebase.project-id:lost2found-94c5a}")
     private String projectId;
 
     public FirebaseConfig(ResourceLoader resourceLoader) {
@@ -39,16 +44,43 @@ public class FirebaseConfig {
     public Firestore firestore() {
         if (FirebaseApp.getApps().isEmpty()) {
             try {
-                Resource resource = resourceLoader.getResource(configPath);
-                GoogleCredentials credentials;
+                GoogleCredentials credentials = null;
 
-                if (resource.exists()) {
-                    try (InputStream serviceAccount = resource.getInputStream()) {
-                        credentials = GoogleCredentials.fromStream(serviceAccount);
-                        log.info("Loaded Firebase service account credentials from: {}", configPath);
+                // 1. Check for FIREBASE_SERVICE_ACCOUNT_JSON environment variable
+                String envJson = System.getenv("FIREBASE_SERVICE_ACCOUNT_JSON");
+                if (envJson != null && !envJson.trim().isEmpty()) {
+                    try (InputStream is = new ByteArrayInputStream(envJson.trim().getBytes(StandardCharsets.UTF_8))) {
+                        credentials = GoogleCredentials.fromStream(is);
+                        log.info("Loaded Firebase service account credentials from FIREBASE_SERVICE_ACCOUNT_JSON environment variable.");
                     }
-                } else {
-                    log.info("Firebase credential file not present at [{}]. Operating in offline / memory-cached mode.", configPath);
+                }
+
+                // 2. Check for FIREBASE_CREDENTIALS_BASE64 environment variable
+                if (credentials == null) {
+                    String envBase64 = System.getenv("FIREBASE_CREDENTIALS_BASE64");
+                    if (envBase64 != null && !envBase64.trim().isEmpty()) {
+                        byte[] decoded = Base64.getDecoder().decode(envBase64.trim());
+                        try (InputStream is = new ByteArrayInputStream(decoded)) {
+                            credentials = GoogleCredentials.fromStream(is);
+                            log.info("Loaded Firebase service account credentials from FIREBASE_CREDENTIALS_BASE64 environment variable.");
+                        }
+                    }
+                }
+
+                // 3. Fallback to local classpath/file resource (e.g. serviceAccountKey.json)
+                if (credentials == null) {
+                    Resource resource = resourceLoader.getResource(configPath);
+                    if (resource.exists()) {
+                        try (InputStream serviceAccount = resource.getInputStream()) {
+                            credentials = GoogleCredentials.fromStream(serviceAccount);
+                            log.info("Loaded Firebase service account credentials from file: {}", configPath);
+                        }
+                    }
+                }
+
+                // 4. Standby default if no credentials present
+                if (credentials == null) {
+                    log.warn("Firebase credentials not found in env or file. Operating in offline memory mode.");
                     credentials = GoogleCredentials.newBuilder().build();
                 }
 
@@ -60,14 +92,14 @@ public class FirebaseConfig {
                 FirebaseApp.initializeApp(options);
                 log.info("Initialized FirebaseApp with projectId: {}", projectId);
             } catch (Exception e) {
-                log.info("Firebase initialization note: {}", e.getMessage());
+                log.error("Firebase initialization error: ", e);
             }
         }
 
         try {
             return FirestoreClient.getFirestore();
         } catch (Exception ex) {
-            log.info("Firestore client standby: {}", ex.getMessage());
+            log.error("Firestore client initialization failed: ", ex);
             return null;
         }
     }
