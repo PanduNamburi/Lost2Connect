@@ -1983,18 +1983,95 @@
             background: #fff;
         }
 
-        @media (max-width:980px) {
+        /* ---------- MOBILE & RESPONSIVE DESIGN ---------- */
+        .mobile-menu-btn, .public-mobile-toggle {
+            display: none;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--ink);
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .mobile-menu-btn:hover, .public-mobile-toggle:hover {
+            background: var(--surface);
+            border-color: var(--primary);
+        }
+
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 199;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar-backdrop.active {
+            display: block;
+            opacity: 1;
+        }
+
+        @media (max-width: 980px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .public-mobile-toggle {
+                display: flex;
+            }
+
+            .public-navbar {
+                padding: 12px 18px;
+                position: relative;
+                flex-wrap: wrap;
+            }
+
+            .public-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 12px;
+                padding-top: 14px;
+                border-top: 1px solid var(--line);
+            }
+
+            .public-links.open {
+                display: flex;
+            }
+
+            .public-links a, .public-links .btn {
+                width: 100%;
+                text-align: center;
+                box-sizing: border-box;
+            }
+
             .hero {
                 grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 30px 18px 40px;
+            }
+
+            .hero h1 {
+                font-size: 2.1rem;
+                line-height: 1.25;
             }
 
             .hero-illustration {
                 order: -1;
-                height: 220px;
+                height: 200px;
             }
 
             .auth-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
 
             .auth-photo {
@@ -2003,27 +2080,150 @@
 
             .landing-stats {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .dash-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: -270px;
+                width: 260px;
+                z-index: 200;
+                transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+            }
+
+            .sidebar.open {
+                transform: translateX(270px);
+            }
+
+            .app-topbar {
+                padding: 10px 16px;
+                gap: 10px;
+            }
+
+            .app-search {
+                max-width: none;
+            }
+
+            .app-search input {
+                font-size: 16px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+            }
+
+            .app-content {
+                padding: 16px 14px 40px;
+            }
+
+            .form-grid, .form-grid2, .grid-2, .grid-3 {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+
+            .panel {
+                padding: 16px;
+            }
+
+            .browse-grid {
+                grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)) !important;
+                gap: 12px !important;
+            }
+
+            .item-card-body {
+                padding: 10px 12px;
+            }
+
+            .item-card-title {
+                font-size: 0.9rem;
+            }
+
+            .item-card-img {
+                height: 140px;
+            }
+
+            .modal-box {
+                width: 95% !important;
+                max-width: 95% !important;
+                padding: 18px !important;
+                max-height: 90vh !important;
+                margin: 10px auto;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .pill-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 4px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-topbar {
+                gap: 8px;
+            }
+
+            .user-pill div:not(.avatar) {
+                display: none;
             }
 
             .dash-stats {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .detail-grid {
-                grid-template-columns: 1fr;
+            .dash-stat {
+                padding: 14px 12px;
             }
 
-            .sidebar {
-                position: fixed;
-                left: -260px;
-                z-index: 200;
-                transition: .2s;
-                box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0);
+            .dash-stat .num {
+                font-size: 1.4rem;
             }
 
-            .sidebar.open {
-                left: 0;
-                box-shadow: 0 0 0 9999px rgba(0, 0, 0, .4);
+            .dash-stat .lbl {
+                font-size: 0.75rem;
+            }
+
+            .page-head h1 {
+                font-size: 1.25rem;
+            }
+
+            .profile-cover {
+                height: 120px;
+            }
+
+            .profile-avatar {
+                width: 72px;
+                height: 72px;
+                margin-top: -36px;
+                font-size: 1.4rem;
+            }
+
+            .profile-header-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
             }
         }
     </style>
@@ -2042,7 +2242,10 @@
                 </div>
                 <span>Lost2Connect</span>
             </div>
-            <nav class="public-links">
+            <button class="public-mobile-toggle" onclick="togglePublicNav()" aria-label="Toggle Navigation">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <nav class="public-links" id="publicLinks">
                 <a class="active" onclick="go('landing')">Home</a>
                 <a onclick="go('browse')">Browse</a>
                 <a onclick="go('reportLost')">Report</a>
@@ -2426,6 +2629,7 @@
 
     <!-- ============ APP SHELL (authenticated) ============ -->
     <div id="appShell" class="app-shell" style="display:none;">
+        <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="logo" onclick="go('dashboard')" style="cursor:pointer;">
@@ -2513,6 +2717,9 @@
 
         <div class="app-main">
             <header class="app-topbar">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Open Navigation Menu">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
                 <div class="app-search">
                     <svg class="icon" viewBox="0 0 24 24">
                         <circle cx="11" cy="11" r="7" />
@@ -3155,7 +3362,33 @@
         }
 
         /* ---------- navigation ---------- */
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (sidebar) sidebar.classList.toggle('open');
+            if (backdrop) backdrop.classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (sidebar) sidebar.classList.remove('open');
+            if (backdrop) backdrop.classList.remove('active');
+        }
+
+        function togglePublicNav() {
+            const nav = document.getElementById('publicLinks');
+            if (nav) nav.classList.toggle('open');
+        }
+
+        function closePublicNav() {
+            const nav = document.getElementById('publicLinks');
+            if (nav) nav.classList.remove('open');
+        }
+
         function go(viewName, updateHash = true) {
+            closeSidebar();
+            closePublicNav();
             if (protectedViews.includes(viewName) && !authToken) {
                 showToast('Please sign in to access your student dashboard.', true);
                 viewName = 'login';
