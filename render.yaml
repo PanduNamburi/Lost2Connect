@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: lost2connect
+    env: docker
+    plan: free
+    region: singapore
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: JAVA_TOOL_OPTIONS
+        value: "-Xmx400m"
