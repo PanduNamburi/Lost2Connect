@@ -29,7 +29,6 @@ public class NotificationController {
     }
 
     @GetMapping("/my")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<NotificationResponse>>> getMyNotifications(
             @AuthenticationPrincipal UserPrincipal currentUser) {
         List<NotificationResponse> notifications = notificationService.getMyNotifications(currentUser);

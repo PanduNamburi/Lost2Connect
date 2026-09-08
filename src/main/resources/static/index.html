@@ -3542,6 +3542,7 @@
                 console.error('Error fetching items from database:', err);
             }
             renderBrowseGrid();
+            renderNotifications();
         }
 
         function setBrowseType(type, btn) {
@@ -4005,10 +4006,11 @@
         /* ---------- notifications ---------- */
         async function renderNotifications() {
             const container = document.getElementById('notificationsContainer');
-            if (!container) return;
             let notifs = [];
             try {
-                const res = await fetch(`${API_BASE}/notifications/my`, { headers: { 'Authorization': `Bearer ${authToken}` } });
+                const headers = {};
+                if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+                const res = await fetch(`${API_BASE}/notifications/my`, { headers });
                 const data = await res.json();
                 if (res.ok && data.data && Array.isArray(data.data)) notifs = data.data;
             } catch (err) { notifs = []; }
@@ -4046,6 +4048,14 @@
 
             const combined = [...notifs, ...itemNotifs];
             combined.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+            const bellDot = document.querySelector('.bell-dot');
+            if (bellDot) {
+                const unreadCount = combined.filter(n => !n.isRead).length;
+                bellDot.style.display = unreadCount > 0 ? 'block' : 'none';
+            }
+
+            if (!container) return;
 
             if (!combined.length) {
                 container.innerHTML = `<div style="padding:30px; text-align:center; color:var(--muted); font-size:.9rem;">No notifications recorded in database.</div>`;
