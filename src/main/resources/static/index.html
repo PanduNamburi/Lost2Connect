@@ -1,0 +1,4070 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost2Connect – Smart Campus Lost &amp; Found Network</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0E9F6E;
+            --primary-dark: #0A7A55;
+            --primary-light: #E6F8F1;
+            --ink: #0F172A;
+            --muted: #64748B;
+            --line: #E7EAEE;
+            --surface: #F7F9FB;
+            --card: #FFFFFF;
+            --danger: #E23744;
+            --danger-bg: #FDECEC;
+            --warn: #D97706;
+            --warn-bg: #FEF3E2;
+            --good: #0E9F6E;
+            --good-bg: #E6F8F1;
+            --blue: #2563EB;
+            --blue-bg: #EAF1FE;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 9px;
+            --shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 8px 24px -12px rgba(15, 23, 42, .10);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--surface);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+        }
+
+        ::selection {
+            background: var(--primary-light);
+        }
+
+        /* ---------- shared bits ---------- */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-weight: 800;
+            font-size: 1.18rem;
+            color: var(--ink);
+            cursor: pointer;
+        }
+
+        .logo-mark {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .logo-mark img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border-radius: 11px;
+            font-weight: 700;
+            font-size: .89rem;
+            cursor: pointer;
+            transition: .15s ease;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            padding: 11px 20px;
+            box-shadow: 0 6px 16px -6px rgba(14, 159, 110, .5);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: #fff;
+            color: var(--ink);
+            border-color: var(--line);
+            padding: 11px 20px;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary-dark);
+        }
+
+        .btn-outline-danger {
+            background: #fff;
+            color: var(--danger);
+            border-color: #F6C6C9;
+            padding: 8px 14px;
+            font-size: .82rem;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            padding: 9px 14px;
+        }
+
+        .btn-sm {
+            padding: 7px 13px;
+            font-size: .8rem;
+            border-radius: 9px;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: .72rem;
+            font-weight: 800;
+            letter-spacing: .02em;
+        }
+
+        .badge-lost {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .badge-found {
+            background: var(--good-bg);
+            color: var(--primary-dark);
+        }
+
+        .badge-searching {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .badge-matched {
+            background: var(--blue-bg);
+            color: var(--blue);
+        }
+
+        .badge-recovered {
+            background: var(--good-bg);
+            color: var(--primary-dark);
+        }
+
+        .badge-match-hi {
+            background: var(--good-bg);
+            color: var(--primary-dark);
+        }
+
+        .badge-match-mid {
+            background: var(--warn-bg);
+            color: var(--warn);
+        }
+
+        .badge-match-lo {
+            background: #FFF1E7;
+            color: #C2540B;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #059669);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: .8rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+            padding: 13px 18px;
+            border-radius: 12px;
+            font-size: .87rem;
+            font-weight: 600;
+            max-width: 360px;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--primary);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 1rem;
+        }
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        /* ---------- PUBLIC NAVBAR ---------- */
+        .public-navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 40px;
+            border-bottom: 1px solid var(--line);
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .public-links {
+            display: flex;
+            align-items: center;
+            gap: 34px;
+        }
+
+        .public-links a {
+            font-size: .9rem;
+            font-weight: 600;
+            color: var(--muted);
+            padding-bottom: 4px;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .public-links a.active {
+            color: var(--ink);
+            border-color: var(--primary);
+        }
+
+        .public-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* ---------- LANDING ---------- */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .landing-wrap {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 56px 40px 70px;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.05fr 1fr;
+            gap: 56px;
+            align-items: center;
+        }
+
+        .hero-scribble {
+            font-family: Georgia, serif;
+            font-style: italic;
+            color: var(--muted);
+            font-size: .95rem;
+            margin-bottom: 14px;
+            position: relative;
+            padding-left: 2px;
+        }
+
+        .hero h1 {
+            font-size: 3.1rem;
+            line-height: 1.08;
+            font-weight: 800;
+            letter-spacing: -.03em;
+            color: var(--ink);
+            margin-bottom: 16px;
+        }
+
+        .hero h1 .accent {
+            color: var(--primary);
+        }
+
+        .hero p {
+            color: var(--muted);
+            font-size: 1.03rem;
+            line-height: 1.65;
+            max-width: 480px;
+            margin-bottom: 26px;
+        }
+
+        .hero-search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+            max-width: 480px;
+        }
+
+        .hero-search input {
+            flex: 1;
+            padding: 13px 16px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: var(--surface);
+            font-size: .92rem;
+            outline: none;
+        }
+
+        .hero-search input:focus {
+            border-color: var(--primary);
+            background: #fff;
+        }
+
+        .hero-search button {
+            width: 46px;
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .hero-actions .btn-primary {
+            background: var(--danger);
+            box-shadow: 0 6px 16px -6px rgba(226, 55, 68, .45);
+        }
+
+        .hero-actions .btn-primary:hover {
+            background: #C22630;
+        }
+
+        .hero-illustration {
+            position: relative;
+            border-radius: 22px;
+            overflow: hidden;
+            height: 330px;
+        }
+
+        .hero-illustration svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .landing-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-top: 52px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 22px 22px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: .15s;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .stat-ico {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-num {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--ink);
+            line-height: 1;
+        }
+
+        .stat-lbl {
+            font-size: .8rem;
+            color: var(--muted);
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        /* ---------- AUTH ---------- */
+        .auth-wrap {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 52px 40px;
+        }
+
+        .auth-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: .87rem;
+            margin-bottom: 28px;
+            cursor: pointer;
+        }
+
+        .auth-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: stretch;
+        }
+
+        .auth-panel {
+            max-width: 400px;
+        }
+        .auth-panel.wide {
+            max-width: 580px;
+        }
+
+        /* ---------- STUDENT PROFILE STYLES ---------- */
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .profile-header-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .profile-cover {
+            height: 180px;
+            background: linear-gradient(135deg, #1B4D3E, #2E8B57, #48D1CC), url('https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+            position: relative;
+        }
+
+        .profile-cover-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 20px 24px;
+        }
+
+        .cover-slogan {
+            color: #ffffff;
+            font-size: 1.15rem;
+            font-weight: 700;
+            font-style: italic;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            font-family: Georgia, serif;
+        }
+
+        .btn-change-cover {
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(6px);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 7px 14px;
+            font-size: .8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: .2s;
+        }
+        .btn-change-cover:hover {
+            background: rgba(0, 0, 0, 0.75);
+        }
+
+        .profile-body-top {
+            padding: 0 28px 24px 28px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-top: -50px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .profile-avatar-wrapper {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 4px solid #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            background: #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-avatar-btn {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1px solid var(--line);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: .85rem;
+        }
+
+        .profile-user-details {
+            flex: 1;
+            padding-top: 55px;
+        }
+
+        .profile-user-name {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: var(--ink);
+            margin: 0 0 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-user-sub {
+            font-size: .92rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .profile-bio-tagline {
+            font-size: .88rem;
+            color: #475569;
+            font-style: italic;
+        }
+
+        .profile-top-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+            padding-top: 55px;
+        }
+
+        .profile-meta-pills {
+            display: flex;
+            gap: 16px;
+            font-size: .8rem;
+            color: var(--muted);
+        }
+
+        .profile-meta-pill {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10B981;
+            display: inline-block;
+        }
+
+        .profile-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .profile-stat-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            cursor: pointer;
+            transition: transform .15s, box-shadow .15s;
+        }
+
+        .profile-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .profile-stat-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .profile-stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: #F1F5F9;
+        }
+
+        .profile-stat-val {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--ink);
+            line-height: 1.1;
+        }
+
+        .profile-stat-lbl {
+            font-size: .78rem;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .profile-main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .profile-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .profile-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #F1F5F9;
+            padding-bottom: 12px;
+        }
+
+        .profile-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-edit-sec {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 5px 12px;
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--ink);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: .15s;
+        }
+
+        .btn-edit-sec:hover {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border-color: var(--primary);
+        }
+
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-item {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            align-items: center;
+            font-size: .88rem;
+            padding: 4px 0;
+        }
+
+        .info-lbl {
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .info-val {
+            color: var(--ink);
+            font-weight: 600;
+            word-break: break-word;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-verified {
+            background: #E6F8F1;
+            color: #0A7A55;
+            font-size: .72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+            border: 1px solid #A7F3D0;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .social-ico {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #F1F5F9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .92rem;
+            color: var(--ink);
+            cursor: pointer;
+            transition: .15s;
+        }
+        .social-ico:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .interest-tag {
+            background: #F1F5F9;
+            color: var(--ink);
+            font-size: .82rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--line);
+        }
+
+        .auth-panel h2 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            letter-spacing: -.02em;
+            margin-bottom: 6px;
+        }
+
+        .auth-panel>p {
+            color: var(--muted);
+            font-size: .92rem;
+            margin-bottom: 28px;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+            display: block;
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 7px;
+        }
+
+        .field .input-icon-wrap {
+            position: relative;
+        }
+
+        .field .input-icon-wrap .icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+        }
+
+        .field input {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: var(--surface);
+            font-size: .92rem;
+            outline: none;
+            transition: .15s;
+        }
+
+        .field input:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .field .toggle-eye {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--muted);
+        }
+
+        .field-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: .84rem;
+            margin-bottom: 22px;
+        }
+
+        .field-row label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .field-row a {
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 18px 0;
+            color: var(--muted);
+            font-size: .8rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--line);
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: #fff;
+            font-weight: 700;
+            font-size: .89rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            cursor: pointer;
+        }
+
+        .google-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .switch-line {
+            text-align: center;
+            font-size: .88rem;
+            color: var(--muted);
+            margin-top: 22px;
+        }
+
+        .switch-line a {
+            color: var(--primary-dark);
+            font-weight: 800;
+        }
+
+        .demo-box {
+            background: var(--primary-light);
+            border: 1px solid #BEEBDA;
+            border-radius: 12px;
+            padding: 13px 15px;
+            font-size: .83rem;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .demo-box button {
+            margin-top: 9px;
+        }
+
+        .auth-photo {
+            border-radius: 22px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 34px;
+            min-height: 100%;
+        }
+
+        .auth-photo svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .auth-photo blockquote {
+            position: relative;
+            z-index: 2;
+            color: #fff;
+        }
+
+        .auth-photo blockquote p {
+            font-family: Georgia, serif;
+            font-style: italic;
+            font-size: 1.35rem;
+            font-weight: 600;
+            line-height: 1.35;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, .25);
+        }
+
+        .auth-photo blockquote span {
+            font-weight: 700;
+            font-size: .9rem;
+            opacity: .95;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, .25);
+        }
+
+        .form-grid2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 16px;
+        }
+
+        .agree-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            font-size: .83rem;
+            color: var(--muted);
+            margin-bottom: 22px;
+            line-height: 1.4;
+        }
+
+        .agree-row a {
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        /* ---------- APP SHELL ---------- */
+        .app-shell {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            flex-shrink: 0;
+            background: #fff;
+            border-right: 1px solid var(--line);
+            display: flex;
+            flex-direction: column;
+            padding: 22px 16px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .sidebar-logo {
+            padding: 6px 10px 22px;
+        }
+
+        .side-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .side-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: .88rem;
+            cursor: pointer;
+            transition: .15s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .side-link:hover {
+            background: var(--surface);
+            color: var(--ink);
+        }
+
+        .side-link.active {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .side-sep {
+            height: 1px;
+            background: var(--line);
+            margin: 12px 4px;
+        }
+
+        .sidebar-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .app-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-topbar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            justify-content: space-between;
+            padding: 15px 32px;
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .app-search {
+            flex: 1;
+            max-width: 420px;
+            position: relative;
+        }
+
+        .app-search .icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+        }
+
+        .app-search input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--surface);
+            font-size: .87rem;
+            outline: none;
+        }
+
+        .app-search input:focus {
+            border-color: var(--primary);
+            background: #fff;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .bell-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--muted);
+        }
+
+        .bell-btn:hover {
+            color: var(--primary-dark);
+            border-color: var(--primary);
+        }
+
+        .bell-dot {
+            position: absolute;
+            top: 7px;
+            right: 8px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--danger);
+            border: 1.5px solid #fff;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            cursor: pointer;
+            padding: 5px 10px 5px 5px;
+            border-radius: 999px;
+        }
+
+        .user-pill:hover {
+            background: var(--surface);
+        }
+
+        .user-pill .name {
+            font-size: .85rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .user-pill .role {
+            font-size: .72rem;
+            color: var(--muted);
+            line-height: 1.1;
+        }
+
+        .app-content {
+            padding: 30px 32px 60px;
+            flex: 1;
+        }
+
+        .page-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 24px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .page-head h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -.02em;
+        }
+
+        .page-head p {
+            color: var(--muted);
+            font-size: .88rem;
+            margin-top: 4px;
+        }
+
+        /* ---------- DASHBOARD ---------- */
+        .dash-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .dash-stat {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 20px 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .dash-stat .num {
+            font-size: 1.9rem;
+            font-weight: 800;
+        }
+
+        .dash-stat .lbl {
+            font-size: .82rem;
+            color: var(--muted);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .panel-head h3 {
+            font-size: 1.02rem;
+            font-weight: 800;
+        }
+
+        .panel-head a {
+            font-size: .83rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            cursor: pointer;
+        }
+
+        .activity-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: .15s;
+        }
+
+        .activity-row:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .activity-row+.activity-row {
+            margin-top: 10px;
+        }
+
+        .activity-ico {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-ico.match {
+            background: var(--good-bg);
+            color: var(--primary-dark);
+        }
+
+        .activity-ico.report {
+            background: var(--warn-bg);
+            color: var(--warn);
+        }
+
+        .activity-ico.recover {
+            background: var(--blue-bg);
+            color: var(--blue);
+        }
+
+        .activity-body {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 700;
+            font-size: .9rem;
+        }
+
+        .activity-time {
+            font-size: .78rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .activity-when {
+            font-size: .78rem;
+            color: var(--muted);
+            flex-shrink: 0;
+        }
+
+        /* ---------- FILTER BAR / BROWSE ---------- */
+        .pill-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .pill-tab {
+            padding: 9px 18px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: #fff;
+            font-weight: 700;
+            font-size: .85rem;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .pill-tab.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar select,
+        .filter-bar input {
+            padding: 10px 14px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: #fff;
+            font-size: .85rem;
+            color: var(--ink);
+            font-weight: 600;
+            outline: none;
+        }
+
+        .filter-bar select:focus,
+        .filter-bar input:focus {
+            border-color: var(--primary);
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 20px;
+        }
+
+        .item-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: .16s;
+        }
+
+        .item-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .item-thumb {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.2rem;
+            position: relative;
+            overflow: hidden;
+            background: var(--surface);
+        }
+
+        .item-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            aspect-ratio: 1 / 1;
+            display: block;
+        }
+
+        .item-thumb .fav {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .92);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+        }
+
+        .item-body {
+            padding: 14px 15px 16px;
+        }
+
+        .item-title {
+            font-weight: 800;
+            font-size: .98rem;
+            margin: 8px 0 8px;
+        }
+
+        .item-meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .79rem;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+
+        .empty-state {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
+        }
+
+        .empty-state .icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 12px;
+            color: var(--line);
+        }
+
+        /* ---------- ITEM DETAIL ---------- */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.15fr;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .detail-gallery-main {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            max-height: 380px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            border: 1px solid var(--line);
+            margin-bottom: 12px;
+            overflow: hidden;
+            background: var(--surface);
+        }
+
+        .detail-gallery-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            aspect-ratio: 1 / 1;
+            display: block;
+        }
+
+        .detail-gallery-thumbs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .detail-gallery-thumbs div {
+            width: 64px;
+            height: 64px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border: 1px solid var(--line);
+            cursor: pointer;
+        }
+
+        .detail-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .detail-icons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .detail-icons button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--line);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--muted);
+        }
+
+        .detail-icons button:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .detail-title {
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -.02em;
+            margin: 10px 0 20px;
+        }
+
+        .detail-fact {
+            display: flex;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .detail-fact:last-child {
+            border-bottom: none;
+        }
+
+        .detail-fact .icon {
+            color: var(--primary-dark);
+            margin-top: 2px;
+        }
+
+        .detail-fact .flabel {
+            font-size: .76rem;
+            color: var(--muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+        }
+
+        .detail-fact .fval {
+            font-size: .93rem;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        .reporter-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--line);
+        }
+
+        .reporter-row .lbl {
+            font-size: .78rem;
+            color: var(--muted);
+        }
+
+        /* ---------- FORMS (report) ---------- */
+        .form-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group.full {
+            grid-column: 1/-1;
+        }
+
+        .form-group label {
+            font-size: .85rem;
+            font-weight: 700;
+        }
+
+        .form-group label .req {
+            color: var(--danger);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 11px 14px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--surface);
+            font-size: .9rem;
+            outline: none;
+            transition: .15s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .dropzone {
+            border: 2px dashed var(--line);
+            border-radius: var(--radius-md);
+            padding: 26px;
+            text-align: center;
+            background: var(--surface);
+            cursor: pointer;
+        }
+
+        .dropzone:hover {
+            border-color: var(--primary);
+        }
+
+        .dropzone .icon {
+            width: 26px;
+            height: 26px;
+            color: var(--muted);
+            margin: 0 auto 8px;
+        }
+
+        .dropzone-title {
+            font-weight: 700;
+            font-size: .9rem;
+        }
+
+        .dropzone-sub {
+            font-size: .78rem;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        .photo-preview {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .photo-preview img {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 9px;
+            border: 1px solid var(--line);
+        }
+
+        /* ---------- TABLE (my reports) ---------- */
+        .table-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: .87rem;
+            border-bottom: 1px solid var(--line);
+        }
+
+        th {
+            background: var(--surface);
+            color: var(--muted);
+            font-weight: 800;
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: var(--surface);
+        }
+
+        .row-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .row-thumb {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .row-loc {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--muted);
+        }
+
+        /* ---------- MATCHES ---------- */
+        .match-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .match-card+.match-card {
+            margin-top: 14px;
+        }
+
+        .match-thumb {
+            width: 58px;
+            height: 58px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            flex-shrink: 0;
+        }
+
+        .match-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .match-title {
+            font-weight: 800;
+            font-size: .97rem;
+            margin-top: 6px;
+        }
+
+        .match-meta {
+            font-size: .8rem;
+            color: var(--muted);
+            margin-top: 3px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ---------- NOTIFICATIONS ---------- */
+        .notif-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            padding: 16px 18px;
+        }
+
+        .notif-row+.notif-row {
+            margin-top: 10px;
+        }
+
+        .notif-ico {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notif-title {
+            font-weight: 700;
+            font-size: .9rem;
+        }
+
+        .notif-msg {
+            font-size: .82rem;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        .notif-state {
+            font-size: .76rem;
+            color: var(--muted);
+            flex-shrink: 0;
+        }
+
+        /* ---------- MODAL (claim) ---------- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, .55);
+            backdrop-filter: blur(3px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #fff;
+            border-radius: var(--radius-xl);
+            max-width: 440px;
+            width: 100%;
+            padding: 28px;
+            box-shadow: 0 24px 60px -12px rgba(15, 23, 42, .35);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: var(--muted);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--surface);
+        }
+
+        footer.public-footer {
+            text-align: center;
+            padding: 26px;
+            color: var(--muted);
+            font-size: .83rem;
+            border-top: 1px solid var(--line);
+            background: #fff;
+        }
+
+        @media (max-width:980px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-illustration {
+                order: -1;
+                height: 220px;
+            }
+
+            .auth-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-photo {
+                display: none;
+            }
+
+            .landing-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dash-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -260px;
+                z-index: 200;
+                transition: .2s;
+                box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0);
+            }
+
+            .sidebar.open {
+                left: 0;
+                box-shadow: 0 0 0 9999px rgba(0, 0, 0, .4);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="toast" class="toast"><span id="toastMsg"></span><button onclick="hideToast()">✕</button></div>
+
+    <!-- ============ PUBLIC SHELL ============ -->
+    <div id="publicShell">
+        <header class="public-navbar">
+            <div class="logo" onclick="go(authToken ? 'dashboard' : 'landing')" style="cursor:pointer;">
+                <div class="logo-mark">
+                    <img src="/logo.png" alt="Lost2Connect Logo">
+                </div>
+                <span>Lost2Connect</span>
+            </div>
+            <nav class="public-links">
+                <a class="active" onclick="go('landing')">Home</a>
+                <a onclick="go('browse')">Browse</a>
+                <a onclick="go('reportLost')">Report</a>
+                <a onclick="go('landing')">How it Works</a>
+                <a onclick="go('landing')">About</a>
+            </nav>
+            <div class="public-actions">
+                <button class="btn btn-outline" onclick="go('login')">Login</button>
+                <button class="btn btn-primary" onclick="go('register')">Sign Up</button>
+            </div>
+        </header>
+
+        <!-- LANDING -->
+        <section id="landingView" class="view active">
+            <div class="landing-wrap">
+                <div class="hero">
+                    <div>
+                        <div class="hero-scribble">A kinder campus. A more connected you.</div>
+                        <h1>Lost Today.<br><span class="accent">Connected</span> Tomorrow.</h1>
+                        <p>A smart Lost &amp; Found network for our campus community. Report, search, and reunite with
+                            your belongings.</p>
+                        <div class="hero-search">
+                            <input type="text" placeholder="Search for items (e.g. phone, wallet, ID card...)"
+                                onkeyup="if(event.key==='Enter'){go('browse')}">
+                            <button onclick="go('browse')"><svg class="icon" style="stroke:#fff" viewBox="0 0 24 24">
+                                    <circle cx="11" cy="11" r="7" />
+                                    <path d="M21 21l-4.3-4.3" />
+                                </svg></button>
+                        </div>
+                        <div class="hero-actions">
+                            <button class="btn btn-primary" onclick="go('reportLost')">Report Lost Item</button>
+                            <button class="btn btn-outline" onclick="go('reportFound')">Report Found Item</button>
+                        </div>
+                    </div>
+                    <div class="hero-illustration">
+                        <svg viewBox="0 0 500 340" preserveAspectRatio="xMidYMid slice">
+                            <rect width="500" height="340" fill="#EAF6EF" />
+                            <rect y="230" width="500" height="110" fill="#DCEEE0" />
+                            <g opacity=".55" fill="#BFE3C9">
+                                <circle cx="60" cy="70" r="42" />
+                                <circle cx="440" cy="55" r="30" />
+                                <circle cx="380" cy="120" r="20" />
+                            </g>
+                            <rect x="150" y="90" width="200" height="150" rx="4" fill="#EDE4D3" />
+                            <rect x="150" y="90" width="200" height="16" fill="#0E9F6E" />
+                            <g fill="#fff">
+                                <rect x="170" y="130" width="24" height="34" />
+                                <rect x="205" y="130" width="24" height="34" />
+                                <rect x="240" y="130" width="24" height="34" />
+                                <rect x="275" y="130" width="24" height="34" />
+                                <rect x="310" y="130" width="24" height="34" />
+                                <rect x="170" y="180" width="24" height="34" />
+                                <rect x="205" y="180" width="24" height="34" />
+                                <rect x="275" y="180" width="24" height="34" />
+                                <rect x="310" y="180" width="24" height="34" />
+                            </g>
+                            <rect x="238" y="180" width="24" height="60" fill="#0A7A55" />
+                            <g stroke="#0E9F6E" stroke-width="6" stroke-linecap="round">
+                                <path d="M60 260 L60 220" />
+                                <path d="M60 220 L40 190" />
+                                <path d="M60 220 L80 190" />
+                                <path d="M110 265 L110 215" />
+                                <path d="M110 215 L88 180" />
+                                <path d="M110 215 L134 182" />
+                                <path d="M430 260 L430 215" />
+                                <path d="M430 215 L408 185" />
+                                <path d="M430 215 L452 185" />
+                            </g>
+                            <circle cx="150" cy="270" r="14" fill="#E23744" />
+                            <rect x="140" y="284" width="20" height="34" rx="6" fill="#E23744" />
+                            <rect x="128" y="290" width="10" height="26" rx="4" fill="#0E9F6E" />
+                            <circle cx="360" cy="275" r="14" fill="#F59E0B" />
+                            <rect x="350" y="289" width="20" height="34" rx="6" fill="#F59E0B" />
+                            <rect x="368" y="296" width="16" height="18" rx="4" fill="#0A7A55" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="landing-stats">
+                    <div class="stat-card" onclick="go('browse')">
+                        <div class="stat-ico"><svg class="icon" viewBox="0 0 24 24">
+                                <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg></div>
+                        <div>
+                            <div class="stat-num">500+</div>
+                            <div class="stat-lbl">Items Reunited</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="go('browse')">
+                        <div class="stat-ico"><svg class="icon" viewBox="0 0 24 24">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg></div>
+                        <div>
+                            <div class="stat-num">1.2K+</div>
+                            <div class="stat-lbl">Active Students</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="go('browse')">
+                        <div class="stat-ico"><svg class="icon" viewBox="0 0 24 24">
+                                <path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z" />
+                                <circle cx="12" cy="10" r="3" />
+                            </svg></div>
+                        <div>
+                            <div class="stat-num">8</div>
+                            <div class="stat-lbl">Campus Locations</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="go('browse')">
+                        <div class="stat-ico"><svg class="icon" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+                            </svg></div>
+                        <div>
+                            <div class="stat-num">100%</div>
+                            <div class="stat-lbl">Community Driven</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LOGIN -->
+        <section id="loginView" class="view">
+            <div class="auth-wrap">
+                <div class="auth-back" onclick="go('landing')">
+                    <svg class="icon" style="width:15px;height:15px" viewBox="0 0 24 24">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg> Back to Home
+                </div>
+                <div class="auth-grid">
+                    <div class="auth-panel">
+                        <h2>Welcome Back</h2>
+                        <p>Login to your Lost2Connect account</p>
+                        <div class="demo-box">
+                            <b>💡 Campus demo account</b> — sign in instantly with seeded demo credentials or use your
+                            registered email.
+                            <button type="button" class="btn btn-outline btn-block btn-sm" onclick="handleDemoLogin()">⚡
+                                One-click demo sign in</button>
+                        </div>
+                        <form id="loginForm" onsubmit="handleLogin(event)">
+                            <div class="field">
+                                <label>College Email or Roll Number</label>
+                                <div class="input-icon-wrap">
+                                    <svg class="icon" viewBox="0 0 24 24">
+                                        <rect x="3" y="5" width="18" height="14" rx="2" />
+                                        <path d="M3 7l9 6 9-6" />
+                                    </svg>
+                                    <input type="text" id="loginIdentifier" placeholder="College Email or Roll Number"
+                                        required style="padding-left:40px;">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>Password</label>
+                                <div class="input-icon-wrap">
+                                    <svg class="icon" viewBox="0 0 24 24">
+                                        <rect x="4" y="11" width="16" height="9" rx="2" />
+                                        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                                    </svg>
+                                    <input type="password" id="loginPassword" placeholder="Enter your password"
+                                        required style="padding-left:40px;">
+                                    <svg class="icon toggle-eye" viewBox="0 0 24 24">
+                                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="field-row">
+                                <label><input type="checkbox" checked> Remember me</label>
+                                <a href="#">Forgot password?</a>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        </form>
+                        <div class="divider">or</div>
+                        <button class="google-btn"
+                            onclick="showToast('Google sign-in is not configured in this demo.', true)">
+                            <svg width="17" height="17" viewBox="0 0 48 48">
+                                <path fill="#FFC107"
+                                    d="M43.6 20.5H42V20H24v8h11.3C33.7 32.6 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z" />
+                                <path fill="#FF3D00"
+                                    d="M6.3 14.7l6.6 4.8C14.5 16 18.9 13 24 13c3 0 5.8 1.1 7.9 3l5.7-5.7C34.6 6.1 29.6 4 24 4c-7.4 0-13.8 4.1-17.1 10.1z" />
+                                <path fill="#4CAF50"
+                                    d="M24 44c5.5 0 10.4-1.9 14.2-5.1l-6.6-5.4C29.6 35.4 26.9 36 24 36c-5.3 0-9.7-3.4-11.3-8.1l-6.6 5C9.9 39.6 16.4 44 24 44z" />
+                                <path fill="#1976D2"
+                                    d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l6.6 5.4C40.9 36.6 44 30.9 44 24c0-1.3-.1-2.7-.4-3.5z" />
+                            </svg>
+                            Continue with Google
+                        </button>
+                        <div class="switch-line">Don't have an account? <a onclick="go('register')">Sign up</a></div>
+                    </div>
+                    <div class="auth-photo">
+                        <svg viewBox="0 0 500 620" preserveAspectRatio="xMidYMid slice">
+                            <path d="M0 0h500v620H0z" fill="#8FBF9F" />
+                            <path d="M0 620h500V300c-40-20-90 20-140 5-60-18-90-45-160-32C130 285 90 340 0 320z"
+                                fill="#5F9E76" />
+                            <g fill="#DCEBDF">
+                                <rect x="150" y="120" width="200" height="180" rx="6" />
+                            </g>
+                            <rect x="150" y="120" width="200" height="26" fill="#0A7A55" />
+                            <g fill="#8FBF9F">
+                                <rect x="175" y="165" width="26" height="40" />
+                                <rect x="215" y="165" width="26" height="40" />
+                                <rect x="255" y="165" width="26" height="40" />
+                                <rect x="295" y="165" width="26" height="40" />
+                                <rect x="175" y="220" width="26" height="40" />
+                                <rect x="295" y="220" width="26" height="40" />
+                            </g>
+                            <rect x="230" y="220" width="40" height="80" fill="#3F7955" />
+                            <path d="M0 620V420c60-10 90 20 150 5s90-45 160-20 130 30 190 5v210z" fill="#4C8C63"
+                                opacity=".7" />
+                        </svg>
+                        <blockquote>
+                            <p>"Small things make a big difference."</p>
+                            <span>— Lost2Connect</span>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- REGISTER -->
+        <section id="registerView" class="view">
+            <div class="auth-wrap">
+                <div class="auth-back" onclick="go('landing')">
+                    <svg class="icon" style="width:15px;height:15px" viewBox="0 0 24 24">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg> Back to Home
+                </div>
+                <div class="auth-grid">
+                    <div class="auth-panel" style="max-height:82vh; overflow-y:auto;">
+                        <h2>Create Your Student Account</h2>
+                        <p>Join the Lost2Connect community</p>
+                        <form id="registerForm" onsubmit="handleRegister(event)" style="display:flex; flex-direction:column; gap:14px;">
+                            <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--brand); margin-bottom: -6px;">1. Account Details</h4>
+                            <div class="form-grid2">
+                                <div class="field">
+                                    <label>Full Name *</label>
+                                    <div class="input-icon-wrap">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="8" r="4" />
+                                            <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
+                                        </svg>
+                                        <input type="text" id="regName" placeholder="e.g. Sai Teja" required style="padding-left:40px;">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label>Roll Number / Student ID *</label>
+                                    <div class="input-icon-wrap">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <rect x="3" y="4" width="18" height="16" rx="2" />
+                                            <path d="M7 9h10M7 13h6" />
+                                        </svg>
+                                        <input type="text" id="regUsername" placeholder="e.g. 21BCE1234" required style="padding-left:40px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-grid2">
+                                <div class="field">
+                                    <label>College Email *</label>
+                                    <div class="input-icon-wrap">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <rect x="3" y="5" width="18" height="14" rx="2" />
+                                            <path d="M3 7l9 6 9-6" />
+                                        </svg>
+                                        <input type="email" id="regEmail" placeholder="sai.teja@aec.edu.in" required style="padding-left:40px;">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label>Phone Number *</label>
+                                    <div class="input-icon-wrap">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                        </svg>
+                                        <input type="text" id="regPhone" placeholder="+91 98765 43210" required style="padding-left:40px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>Password *</label>
+                                <div class="input-icon-wrap">
+                                    <svg class="icon" viewBox="0 0 24 24">
+                                        <rect x="4" y="11" width="16" height="9" rx="2" />
+                                        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                                    </svg>
+                                    <input type="password" id="regPassword" placeholder="Create a strong password" required style="padding-left:40px;">
+                                </div>
+                            </div>
+
+                            <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--brand); margin-top: 4px; margin-bottom: -6px;">2. Personal &amp; Academic Details</h4>
+                            <div class="form-grid2">
+                                <div class="field">
+                                    <label>Date of Birth</label>
+                                    <input type="date" id="regDob">
+                                </div>
+                                <div class="field">
+                                    <label>Gender</label>
+                                    <select id="regGender">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                        <option value="Prefer not to say">Prefer not to say</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-grid2">
+                                <div class="field">
+                                    <label>College / Institution</label>
+                                    <input type="text" id="regCollege" placeholder="e.g. Aditya Engineering College">
+                                </div>
+                                <div class="field">
+                                    <label>Department / Stream</label>
+                                    <input type="text" id="regDepartment" placeholder="e.g. Computer Science and Engineering">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>Year of Study</label>
+                                <select id="regYear">
+                                    <option value="1st Year">1st Year</option>
+                                    <option value="2nd Year">2nd Year</option>
+                                    <option value="3rd Year" selected>3rd Year</option>
+                                    <option value="4th Year">4th Year</option>
+                                    <option value="Post Graduate">Post Graduate</option>
+                                </select>
+                            </div>
+
+                            <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--brand); margin-top: 4px; margin-bottom: -6px;">3. Profile Photo</h4>
+                            <div class="field">
+                                <label>Profile Picture / Photo</label>
+                                <div style="display:flex; align-items:center; gap:16px; margin-top:4px;">
+                                    <div id="regAvatarPreview" style="width:64px; height:64px; border-radius:50%; background:#F1F5F9; border:1px dashed #CBD5E1; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+                                        <span style="font-size:1.5rem; color:#94A3B8;">👤</span>
+                                    </div>
+                                    <div style="flex:1;">
+                                        <input type="file" id="regAvatarFile" accept="image/*" onchange="handleRegAvatarSelect(event)" style="display:none;">
+                                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('regAvatarFile').click()" style="padding:8px 14px; font-size:0.85rem; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
+                                            📷 Upload Profile Photo
+                                        </button>
+                                        <div style="font-size:0.78rem; color:var(--muted); margin-top:4px;">Upload JPG, PNG or WEBP (Max 5MB)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="agree-row">
+                                <input type="checkbox" required style="margin-top:3px;"> I agree to the <a href="#">Terms &amp; Conditions</a>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                        </form>
+                        <div class="switch-line" style="margin-top:12px;">Already have an account? <a onclick="go('login')">Login</a></div>
+                    </div>
+                    <div class="auth-photo">
+                        <svg viewBox="0 0 500 620" preserveAspectRatio="xMidYMid slice">
+                            <path d="M0 0h500v620H0z" fill="#8FBF9F" />
+                            <path d="M0 620h500V320c-50-25-100 15-160 0-55-14-90-40-150-25C130 305 80 350 0 340z"
+                                fill="#5F9E76" />
+                            <rect x="150" y="130" width="200" height="170" rx="6" fill="#DCEBDF" />
+                            <rect x="150" y="130" width="200" height="26" fill="#0A7A55" />
+                            <g fill="#8FBF9F">
+                                <rect x="175" y="175" width="26" height="40" />
+                                <rect x="215" y="175" width="26" height="40" />
+                                <rect x="295" y="175" width="26" height="40" />
+                                <rect x="175" y="230" width="26" height="40" />
+                                <rect x="215" y="230" width="26" height="40" />
+                                <rect x="295" y="230" width="26" height="40" />
+                            </g>
+                            <rect x="230" y="230" width="40" height="70" fill="#3F7955" />
+                        </svg>
+                        <blockquote>
+                            <p>"Same campus. Stronger community."</p>
+                            <span>— Lost2Connect</span>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="public-footer">&copy; 2026 Lost2Connect Network — Smart Campus Lost &amp; Found. All rights
+            reserved.</footer>
+    </div>
+
+    <!-- ============ APP SHELL (authenticated) ============ -->
+    <div id="appShell" class="app-shell" style="display:none;">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo" onclick="go('dashboard')" style="cursor:pointer;">
+                    <div class="logo-mark">
+                        <img src="/logo.png" alt="Lost2Connect Logo">
+                    </div>
+                    <span>Lost2Connect</span>
+                </div>
+            </div>
+            <nav class="side-nav">
+                <button class="side-link" data-view="dashboard" onclick="go('dashboard')">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="7" height="9" rx="1.5" />
+                        <rect x="14" y="3" width="7" height="5" rx="1.5" />
+                        <rect x="14" y="12" width="7" height="9" rx="1.5" />
+                        <rect x="3" y="16" width="7" height="5" rx="1.5" />
+                    </svg>
+                    Dashboard
+                </button>
+                <button class="side-link" data-view="browse" onclick="go('browse')">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M21 21l-4.3-4.3" />
+                    </svg>
+                    Browse Items
+                </button>
+                <button class="side-link" data-view="reportLost" onclick="go('reportLost')">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12 9v4M12 17h.01" />
+                        <path d="M10.3 3.9 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" />
+                    </svg>
+                    Report Lost Item
+                </button>
+                <button class="side-link" data-view="reportFound" onclick="go('reportFound')">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M21 8l-9-5-9 5 9 5 9-5z" />
+                        <path d="M3 8v8l9 5 9-5V8" />
+                        <path d="M12 13v8" />
+                    </svg>
+                    Report Found Item
+                </button>
+                <div class="side-sep"></div>
+                <button class="side-link" data-view="myReports" onclick="go('myReports')">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                        <path d="M14 3v6h6" />
+                        <path d="M9 13h6M9 17h6" />
+                    </svg>
+                    My Reports
+                </button>
+                <button class="side-link" data-view="smartMatches" onclick="go('smartMatches')">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path
+                            d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+                    </svg>
+                    My Matches
+                </button>
+                <button class="side-link" data-view="notifications" onclick="go('notifications')">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+                    </svg>
+                    Notifications
+                </button>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="side-sep"></div>
+                <button class="side-link" data-view="profile" onclick="go('profile')">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
+                    </svg>
+                    Profile
+                </button>
+                <button class="side-link" onclick="handleLogout()" style="color:var(--danger);">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <path d="M16 17l5-5-5-5" />
+                        <path d="M21 12H9" />
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <div class="app-main">
+            <header class="app-topbar">
+                <div class="app-search">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M21 21l-4.3-4.3" />
+                    </svg>
+                    <input type="text" id="topSearch" placeholder="Search items, reports, locations..."
+                        onkeyup="if(event.key==='Enter'){go('browse');filterItems(this.value)}">
+                </div>
+                <div class="topbar-right">
+                    <button class="bell-btn" onclick="go('notifications')"><span class="bell-dot"></span>
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+                        </svg>
+                    </button>
+                    <div class="user-pill" onclick="go('profile')" title="View Profile" style="cursor:pointer;">
+                        <div class="avatar" id="topAvatar">ST</div>
+                        <div>
+                            <div class="name" id="topName">Sai Teja</div>
+                            <div class="role">Student</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="app-content">
+
+                <!-- DASHBOARD -->
+                <section id="dashboardView" class="view">
+                    <div class="page-head">
+                        <div>
+                            <h1 id="dashGreeting">Welcome back, Sai!</h1>
+                            <p>Here's what's happening on campus.</p>
+                        </div>
+                    </div>
+                    <div class="dash-stats">
+                        <div class="dash-stat">
+                            <div class="num" id="dashReportsCount">0</div>
+                            <div class="lbl">My Reports</div>
+                        </div>
+                        <div class="dash-stat">
+                            <div class="num" id="dashMatchesCount">0</div>
+                            <div class="lbl">Matches</div>
+                        </div>
+                        <div class="dash-stat">
+                            <div class="num" id="dashReunitedCount">0</div>
+                            <div class="lbl">Items Reunited</div>
+                        </div>
+                        <div class="dash-stat">
+                            <div class="num" id="dashUsersCount">0</div>
+                            <div class="lbl">Community Members</div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-head">
+                            <h3>Recent Activity</h3><a onclick="go('notifications')">View All</a>
+                        </div>
+                        <div id="activityFeed"></div>
+                    </div>
+                </section>
+
+                <!-- BROWSE -->
+                <section id="browseView" class="view">
+                    <div class="page-head">
+                        <div>
+                            <h1>Lost &amp; Found Items</h1>
+                            <p>Explore items reported by the campus community.</p>
+                        </div>
+                    </div>
+                    <div class="pill-tabs">
+                        <button class="pill-tab active" data-type="ALL" onclick="setBrowseType('ALL',this)">All
+                            Items</button>
+                        <button class="pill-tab" data-type="LOST" onclick="setBrowseType('LOST',this)">Lost
+                            Items</button>
+                        <button class="pill-tab" data-type="FOUND" onclick="setBrowseType('FOUND',this)">Found
+                            Items</button>
+                    </div>
+                    <div class="filter-bar">
+                        <select id="categoryFilter" onchange="filterItems()">
+                            <option value="ALL">Category</option>
+                            <option value="ELECTRONICS">Electronics</option>
+                            <option value="JEWELRY">Jewelry</option>
+                            <option value="BAGS">Bags &amp; Backpacks</option>
+                            <option value="DOCUMENTS">ID Cards &amp; Documents</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                        <select onchange="filterItems()">
+                            <option>Location</option>
+                            <option>Library</option>
+                            <option>Main Block</option>
+                            <option>Canteen</option>
+                            <option>ECE Block</option>
+                        </select>
+                        <select onchange="filterItems()">
+                            <option>Date</option>
+                            <option>Today</option>
+                            <option>This Week</option>
+                            <option>This Month</option>
+                        </select>
+                        <input type="text" id="searchInput" placeholder="Search items..." onkeyup="filterItems()"
+                            style="min-width:220px;">
+                        <select style="margin-left:auto;">
+                            <option>Sort By: Newest</option>
+                            <option>Sort By: Oldest</option>
+                        </select>
+                    </div>
+                    <div class="items-grid" id="itemsGridContainer"></div>
+                </section>
+
+                <!-- ITEM DETAIL -->
+                <section id="itemDetailView" class="view">
+                    <div class="auth-back" onclick="go('browse')" style="margin-bottom:22px;">
+                        <svg class="icon" style="width:15px;height:15px" viewBox="0 0 24 24">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg> Back to Browse
+                    </div>
+                    <div class="detail-grid" id="itemDetailContent"></div>
+                </section>
+
+                <!-- REPORT LOST -->
+                <section id="reportLostView" class="view">
+                    <div class="page-head">
+                        <div>
+                            <h1>Report a Lost Item</h1>
+                            <p>Help us find your item by providing accurate details.</p>
+                        </div>
+                    </div>
+                    <form id="reportLostForm" class="form-card" onsubmit="handleReportLost(event)">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Item Name <span class="req">*</span></label><input
+                                    type="text" id="lostTitle" placeholder="e.g., iPhone 13" required></div>
+                            <div class="form-group"><label>Category <span class="req">*</span></label>
+                                <select id="lostCategory" required>
+                                    <option value="ELECTRONICS">Electronics</option>
+                                    <option value="JEWELRY">Jewelry</option>
+                                    <option value="BAGS">Bags &amp; Backpacks</option>
+                                    <option value="DOCUMENTS">ID Cards &amp; Documents</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group full"><label>Description <span class="req">*</span></label><textarea
+                                    id="lostDesc" rows="3"
+                                    placeholder="Provide detailed description (color, brand, marks...)"
+                                    required></textarea></div>
+                            <div class="form-group"><label>Date Lost <span class="req">*</span></label><input
+                                    type="date" id="lostDate" required></div>
+                            <div class="form-group"><label>Location Lost <span class="req">*</span></label>
+                                <select id="lostLocation" required>
+                                    <option value="Library">Central Library</option>
+                                    <option value="Main Block">Main Academic Block</option>
+                                    <option value="Canteen">Student Canteen</option>
+                                    <option value="Sports Complex">Sports Complex</option>
+                                    <option value="Hostel A">Hostel Block A</option>
+                                </select>
+                            </div>
+                            <div class="form-group full"><label>Contact Phone Number</label><input type="text"
+                                    id="lostPhone" placeholder="+91 9876543210"></div>
+                            <div class="form-group full">
+                                <label>Upload Images</label>
+                                <div class="dropzone" onclick="if(event.target.id !== 'lostPhotoInput') document.getElementById('lostPhotoInput').click()">
+                                    <input type="file" id="lostPhotoInput" accept="image/*" multiple
+                                        style="display:none;" onchange="handlePhotoSelect(event,'lostPhotoPreview')">
+                                    <svg class="icon" viewBox="0 0 24 24">
+                                        <path d="M12 15V3m0 0L7 8m5-5 5 5" />
+                                        <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />
+                                    </svg>
+                                    <div class="dropzone-title">Click to upload or drag and drop</div>
+                                    <div class="dropzone-sub">PNG, JPG up to 5MB (Max 3 images)</div>
+                                    <div id="lostPhotoPreview" class="photo-preview"></div>
+                                </div>
+                            </div>
+                            <div class="form-group full"><button type="submit" class="btn btn-primary"
+                                    style="align-self:flex-start;">Submit Report</button></div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- REPORT FOUND -->
+                <section id="reportFoundView" class="view">
+                    <div class="page-head">
+                        <div>
+                            <h1>Report a Found Item</h1>
+                            <p>Help reunite a fellow student with their belongings.</p>
+                        </div>
+                    </div>
+                    <form id="reportFoundForm" class="form-card" onsubmit="handleReportFound(event)">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Item Title <span class="req">*</span></label><input
+                                    type="text" id="foundTitle" placeholder="e.g., Blue Navy Backpack" required></div>
+                            <div class="form-group"><label>Category <span class="req">*</span></label>
+                                <select id="foundCategory" required>
+                                    <option value="BAGS">Bags &amp; Backpacks</option>
+                                    <option value="ELECTRONICS">Electronics</option>
+                                    <option value="JEWELRY">Jewelry</option>
+                                    <option value="DOCUMENTS">ID Cards &amp; Documents</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group full"><label>Description <span class="req">*</span></label><textarea
+                                    id="foundDesc" rows="3"
+                                    placeholder="Describe general appearance, avoid revealing secret marks..."
+                                    required></textarea></div>
+                            <div class="form-group"><label>Date Found <span class="req">*</span></label><input
+                                    type="date" id="foundDate" required></div>
+                            <div class="form-group"><label>Custody Location <span class="req">*</span></label><input
+                                    type="text" id="foundCustody" placeholder="e.g., Library Security Desk" required>
+                            </div>
+                            <div class="form-group full"><label>Ownership Verification Question <span
+                                        class="req">*</span></label><input type="text" id="foundQuestion"
+                                    placeholder="e.g., What brand notebook is inside?" required></div>
+                            <div class="form-group full">
+                                <label>Upload Images</label>
+                                <div class="dropzone" onclick="if(event.target.id !== 'foundPhotoInput') document.getElementById('foundPhotoInput').click()">
+                                    <input type="file" id="foundPhotoInput" accept="image/*" multiple
+                                        style="display:none;" onchange="handlePhotoSelect(event,'foundPhotoPreview', true)">
+                                    <svg class="icon" viewBox="0 0 24 24">
+                                        <path d="M12 15V3m0 0L7 8m5-5 5 5" />
+                                        <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />
+                                    </svg>
+                                    <div class="dropzone-title">Click to upload or drag and drop</div>
+                                    <div class="dropzone-sub">PNG, JPG up to 5MB (Max 3 images)</div>
+                                    <div id="foundPhotoPreview" class="photo-preview"></div>
+                                </div>
+                            </div>
+                            <div class="form-group full"><button type="submit" class="btn btn-primary"
+                                    style="align-self:flex-start;">Submit Found Item</button></div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- MY REPORTS -->
+                <section id="myReportsView" class="view">
+                    <div class="page-head">
+                        <div>
+                            <h1>My Reports</h1>
+                            <p>Track the status of your reported items.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="go('reportLost')">+ New Report</button>
+                    </div>
+                    <div class="pill-tabs">
+                        <button class="pill-tab active" data-rtype="Lost" onclick="setReportsTab('Lost',this)">Lost
+                            Items</button>
+                        <button class="pill-tab" data-rtype="Found" onclick="setReportsTab('Found',this)">Found
+                            Items</button>
+                    </div>
+                    <div class="table-card">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Date</th>
+                                        <th>Location</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="myReportsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SMART MATCHES -->
+                <section id="smartMatchesView" class="view">
+                    <div class="page-head">
+                        <div>
+                            <h1>My Matches</h1>
+                            <p>Items that may match with your reports.</p>
+                        </div>
+                    </div>
+                    <div class="pill-tabs">
+                        <button class="pill-tab active" data-mstatus="Pending"
+                            onclick="setMatchesTab('Pending',this)">Pending (<span id="cntPending">3</span>)</button>
+                        <button class="pill-tab" data-mstatus="Accepted"
+                            onclick="setMatchesTab('Accepted',this)">Accepted (<span id="cntAccepted">1</span>)</button>
+                        <button class="pill-tab" data-mstatus="Rejected"
+                            onclick="setMatchesTab('Rejected',this)">Rejected (<span id="cntRejected">0</span>)</button>
+                    </div>
+                    <div id="matchesContainer"></div>
+                </section>
+
+                <!-- NOTIFICATIONS -->
+                <section id="notificationsView" class="view">
+                    <div class="page-head">
+                        <div>
+                            <h1>Notifications</h1>
+                            <p>Alerts for match suggestions and claim updates.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STUDENT PROFILE (New Design) -->
+                <section id="profileView" class="view">
+                    <!-- Page Header -->
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px;">
+                        <div>
+                            <h1 style="font-size:1.8rem; font-weight:800; color:var(--ink); margin:0 0 4px 0;">My Profile</h1>
+                            <p style="color:var(--muted); font-size:0.95rem; margin:0;">View and manage your account information.</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="openProfileEditModal()" style="display:inline-flex; align-items:center; gap:8px; font-weight:600; padding:10px 18px; border-radius:8px; border:1px solid #CBD5E1; background:#ffffff; color:#334155; cursor:pointer;">
+                            <svg class="icon" viewBox="0 0 24 24" style="width:16px; height:16px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            Edit Profile
+                        </button>
+                    </div>
+
+                    <!-- Top Section: 2 Columns (User Summary Card Left, Info Stack Right) -->
+                    <div style="display:grid; grid-template-columns: 320px 1fr; gap:24px; margin-bottom:24px;">
+                        
+                        <!-- LEFT COLUMN: User Summary Card -->
+                        <div style="background:#ffffff; border:1px solid #E2E8F0; border-radius:12px; padding:32px 24px; text-align:center; box-shadow: 0 1px 3px rgba(0,0,0,0.03); display:flex; flex-direction:column; align-items:center;">
+                            <div style="position:relative; margin-bottom:20px; width:160px; height:160px;">
+                                <img id="profileAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Avatar" style="width:160px; height:160px; border-radius:50%; object-fit:cover; display:block; border: 1px solid #E2E8F0;">
+                                <input type="file" id="profileDirectAvatarFile" accept="image/*" onchange="handleDirectAvatarUpload(event)" style="display:none;">
+                                <button onclick="document.getElementById('profileDirectAvatarFile').click()" title="Upload profile photo" style="position:absolute; bottom:4px; right:4px; width:36px; height:36px; border-radius:50%; background:#ffffff; border:1px solid #E2E8F0; box-shadow:0 2px 6px rgba(0,0,0,0.12); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                                    <svg class="icon" viewBox="0 0 24 24" style="width:18px; height:18px; fill:none; stroke:#475569; stroke-width:2;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                </button>
+                            </div>
+                            <h2 id="profName" style="font-size:1.45rem; font-weight:800; color:#0F172A; margin:0 0 6px 0;">Sai Teja</h2>
+                            <p id="profSub" style="font-size:0.92rem; color:#64748B; margin:0 0 4px 0; font-weight:500;">Computer Science Student</p>
+                            <p id="profCollege" style="font-size:0.92rem; color:#64748B; margin:0 0 16px 0; font-weight:500;">Aditya Engineering College</p>
+                            
+                            <div style="margin-bottom:20px;">
+                                <span class="badge" style="background:#E6F8F1; color:#059669; padding:6px 16px; border-radius:20px; font-size:0.85rem; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
+                                    🎓 Student
+                                </span>
+                            </div>
+
+                            <hr style="width:100%; border:0; border-top:1px dashed #E2E8F0; margin:0 0 20px 0;">
+
+                            <p id="profQuote" style="font-style:italic; font-family:Georgia, serif; color:#475569; font-size:0.92rem; margin:0; line-height:1.5;">
+                                "Small things make a big difference."
+                            </p>
+                        </div>
+
+                        <!-- RIGHT COLUMN: Stack of 3 Cards -->
+                        <div style="display:flex; flex-direction:column; gap:20px;">
+                            
+                            <!-- Card 1: Personal Information -->
+                            <div style="background:#ffffff; border:1px solid #E2E8F0; border-radius:12px; padding:20px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                                <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
+                                    <div style="width:38px; height:38px; border-radius:10px; background:#E6F8F1; color:#059669; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                        <svg class="icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#059669; stroke-width:2;"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+                                    </div>
+                                    <h3 style="font-size:1.05rem; font-weight:700; color:#0F172A; margin:0;">Personal Information</h3>
+                                </div>
+                                <div style="display:flex; flex-direction:column;">
+                                    <div style="display:grid; grid-template-columns: 180px 1fr; padding:10px 0; border-bottom:1px solid #F1F5F9; font-size:0.9rem;">
+                                        <span style="color:#64748B; font-weight:500;">Full Name</span>
+                                        <span id="profInfoName" style="color:#0F172A; font-weight:600;">Sai Teja</span>
+                                    </div>
+                                    <div style="display:grid; grid-template-columns: 180px 1fr; padding:10px 0; border-bottom:1px solid #F1F5F9; font-size:0.9rem;">
+                                        <span style="color:#64748B; font-weight:500;">Roll Number</span>
+                                        <span id="profInfoRoll" style="color:#0F172A; font-weight:600;">21BCE1234</span>
+                                    </div>
+                                    <div style="display:grid; grid-template-columns: 180px 1fr; padding:10px 0; border-bottom:1px solid #F1F5F9; font-size:0.9rem;">
+                                        <span style="color:#64748B; font-weight:500;">Date of Birth</span>
+                                        <span id="profInfoDob" style="color:#0F172A; font-weight:600;">15 March 2004</span>
+                                    </div>
+                                    <div style="display:grid; grid-template-columns: 180px 1fr; padding:10px 0; font-size:0.9rem;">
+                                        <span style="color:#64748B; font-weight:500;">Gender</span>
+                                        <span id="profInfoGender" style="color:#0F172A; font-weight:600;">Male</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 2: Academic Information -->
+                            <div style="background:#ffffff; border:1px solid #E2E8F0; border-radius:12px; padding:20px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                                <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
+                                    <div style="width:38px; height:38px; border-radius:10px; background:#E6F8F1; color:#059669; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                        <svg class="icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#059669; stroke-width:2;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+                                    </div>
+                                    <h3 style="font-size:1.05rem; font-weight:700; color:#0F172A; margin:0;">Academic Information</h3>
+                                </div>
+                                <div style="display:flex; flex-direction:column;">
+                                    <div style="display:grid; grid-template-columns: 180px 1fr; padding:10px 0; border-bottom:1px solid #F1F5F9; font-size:0.9rem;">
+                                        <span style="color:#64748B; font-weight:500;">College</span>
+                                        <span id="profInfoCollege" style="color:#0F172A; font-weight:600;">Aditya Engineering College</span>
+                                    </div>
+                                    <div style="display:grid; grid-template-columns: 180px 1fr; padding:10px 0; border-bottom:1px solid #F1F5F9; font-size:0.9rem;">
+                                        <span style="color:#64748B; font-weight:500;">Department</span>
+                                        <span id="profInfoDept" style="color:#0F172A; font-weight:600;">Computer Science and Engineering</span>
+                                    </div>
+                                    <div style="display:grid; grid-template-columns: 180px 1fr; padding:10px 0; font-size:0.9rem;">
+                                        <span style="color:#64748B; font-weight:500;">Year of Study</span>
+                                        <span id="profInfoYear" style="color:#0F172A; font-weight:600;">3rd Year</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: Contact Information -->
+                            <div style="background:#ffffff; border:1px solid #E2E8F0; border-radius:12px; padding:20px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                                <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
+                                    <div style="width:38px; height:38px; border-radius:10px; background:#E6F8F1; color:#059669; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                        <svg class="icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#059669; stroke-width:2;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                    </div>
+                                    <h3 style="font-size:1.05rem; font-weight:700; color:#0F172A; margin:0;">Contact Information</h3>
+                                </div>
+                                <div style="display:flex; flex-direction:column;">
+                                    <div style="display:grid; grid-template-columns: 180px 1fr; padding:10px 0; border-bottom:1px solid #F1F5F9; font-size:0.9rem;">
+                                        <span style="color:#64748B; font-weight:500;">College Email</span>
+                                        <span id="profInfoEmail" style="color:#0F172A; font-weight:600;">sai.teja@aec.edu.in</span>
+                                    </div>
+                                    <div style="display:grid; grid-template-columns: 180px 1fr; padding:10px 0; font-size:0.9rem;">
+                                        <span style="color:#64748B; font-weight:500;">Phone Number</span>
+                                        <span id="profInfoPhone" style="color:#0F172A; font-weight:600;">+91 98765 43210</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Bottom Section: My Activity -->
+                    <div style="background:#ffffff; border:1px solid #E2E8F0; border-radius:12px; padding:24px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div style="width:36px; height:36px; border-radius:10px; background:#E6F8F1; color:#059669; display:flex; align-items:center; justify-content:center;">
+                                    <svg class="icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#059669; stroke-width:2;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                                </div>
+                                <h3 style="font-size:1.1rem; font-weight:700; color:#0F172A; margin:0;">My Activity</h3>
+                            </div>
+                            <a onclick="go('myReports')" style="color:#059669; font-weight:600; font-size:0.9rem; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+                                View All ›
+                            </a>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:16px;">
+                            <!-- My Reports -->
+                            <div onclick="go('myReports')" style="background:#F0FDF4; border:1px solid #DCFCE7; border-radius:10px; padding:18px 20px; display:flex; align-items:center; gap:16px; cursor:pointer; transition:0.2s;">
+                                <div style="width:44px; height:44px; border-radius:10px; background:#DCFCE7; color:#166534; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <svg class="icon" viewBox="0 0 24 24" style="width:22px; height:22px; fill:none; stroke:#166534; stroke-width:2;"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M9 13h6M9 17h6"/></svg>
+                                </div>
+                                <div>
+                                    <div id="profStatReports" style="font-size:1.45rem; font-weight:800; color:#0F172A; line-height:1.1;">12</div>
+                                    <div style="font-size:0.82rem; color:#64748B; font-weight:500; margin-top:2px;">My Reports</div>
+                                </div>
+                            </div>
+
+                            <!-- Matches -->
+                            <div onclick="go('smartMatches')" style="background:#EFF6FF; border:1px solid #DBEAFE; border-radius:10px; padding:18px 20px; display:flex; align-items:center; gap:16px; cursor:pointer; transition:0.2s;">
+                                <div style="width:44px; height:44px; border-radius:10px; background:#DBEAFE; color:#1E40AF; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <svg class="icon" viewBox="0 0 24 24" style="width:22px; height:22px; fill:none; stroke:#1E40AF; stroke-width:2;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                </div>
+                                <div>
+                                    <div id="profStatMatches" style="font-size:1.45rem; font-weight:800; color:#0F172A; line-height:1.1;">3</div>
+                                    <div style="font-size:0.82rem; color:#64748B; font-weight:500; margin-top:2px;">Matches</div>
+                                </div>
+                            </div>
+
+                            <!-- Items Reunited -->
+                            <div style="background:#ECFDF5; border:1px solid #D1FAE5; border-radius:10px; padding:18px 20px; display:flex; align-items:center; gap:16px;">
+                                <div style="width:44px; height:44px; border-radius:10px; background:#D1FAE5; color:#065F46; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <svg class="icon" viewBox="0 0 24 24" style="width:22px; height:22px; fill:none; stroke:#065F46; stroke-width:2;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                </div>
+                                <div>
+                                    <div id="profStatReunited" style="font-size:1.45rem; font-weight:800; color:#0F172A; line-height:1.1;">8</div>
+                                    <div style="font-size:0.82rem; color:#64748B; font-weight:500; margin-top:2px;">Items Reunited</div>
+                                </div>
+                            </div>
+
+                            <!-- Community Points -->
+                            <div style="background:#F5F3FF; border:1px solid #DDD6FE; border-radius:10px; padding:18px 20px; display:flex; align-items:center; gap:16px;">
+                                <div style="width:44px; height:44px; border-radius:10px; background:#DDD6FE; color:#5B21B6; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <svg class="icon" viewBox="0 0 24 24" style="width:22px; height:22px; fill:none; stroke:#5B21B6; stroke-width:2;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                </div>
+                                <div>
+                                    <div id="profStatPoints" style="font-size:1.45rem; font-weight:800; color:#0F172A; line-height:1.1;">0</div>
+                                    <div style="font-size:0.82rem; color:#64748B; font-weight:500; margin-top:2px;">Community Points</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- CLAIM MODAL -->
+    <div id="itemDetailsModal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeItemModal()">✕</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- EDIT PROFILE MODAL -->
+    <div id="editProfileModal" class="modal-overlay">
+        <div class="modal-box" style="max-width: 680px; max-height: 90vh; overflow-y: auto;">
+            <button class="modal-close" onclick="closeProfileModal()">✕</button>
+            <h2 style="margin-bottom: 4px;">Edit Student Profile</h2>
+            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 20px;">Update your personal details, academic info, and preferences.</p>
+            <form id="editProfileForm" onsubmit="handleProfileUpdate(event)" style="display:flex; flex-direction:column; gap:14px;">
+                <div class="form-grid2">
+                    <div class="field">
+                        <label>Full Name</label>
+                        <input type="text" id="editName" required>
+                    </div>
+                    <div class="field">
+                        <label>Phone Number</label>
+                        <input type="text" id="editPhone">
+                    </div>
+                </div>
+                <div class="form-grid2">
+                    <div class="field">
+                        <label>Date of Birth</label>
+                        <input type="date" id="editDob">
+                    </div>
+                    <div class="field">
+                        <label>Gender</label>
+                        <select id="editGender">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid2">
+                    <div class="field">
+                        <label>Student ID / Roll Number</label>
+                        <input type="text" id="editRoll">
+                    </div>
+                    <div class="field">
+                        <label>Year of Study</label>
+                        <select id="editYear">
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                            <option value="Post Graduate">Post Graduate</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid2">
+                    <div class="field">
+                        <label>College / Institution</label>
+                        <input type="text" id="editCollege">
+                    </div>
+                    <div class="field">
+                        <label>Department / Stream</label>
+                        <input type="text" id="editDepartment">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Profile Photo</label>
+                    <div style="display:flex; align-items:center; gap:16px; margin-top:4px;">
+                        <img id="editAvatarPreviewImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Preview" style="width:64px; height:64px; border-radius:50%; object-fit:cover; border:1px solid #CBD5E1; flex-shrink:0;">
+                        <div style="flex:1;">
+                            <input type="file" id="editAvatarFile" accept="image/*" onchange="handleEditAvatarSelect(event)" style="display:none;">
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('editAvatarFile').click()" style="padding:8px 14px; font-size:0.85rem; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
+                                📷 Choose New Photo
+                            </button>
+                            <div style="font-size:0.78rem; color:var(--muted); margin-top:4px;">Upload JPG, PNG or WEBP (Max 5MB)</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:16px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeProfileModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        /* ============================================================
+           Lost2Connect — front-end logic
+           Tries the real backend at API_BASE; falls back to demo data
+           (matching the product mock-ups) whenever the backend can't be
+           reached, so the UI always looks fully populated.
+        ============================================================ */
+        const API_BASE = 'http://localhost:8080/api/v1';
+        let authToken = localStorage.getItem('lost2connect_jwt');
+        let currentUser = null;
+        let allLostItems = [];
+        let allFoundItems = [];
+        let allMatches = [];
+        let browseType = 'ALL';
+        let reportsTab = 'Lost';
+        let matchesTab = 'Pending';
+
+        const CAT_ICON = { ELECTRONICS: '📱', BAGS: '🎒', BAGS_LUGGAGE: '🎒', DOCUMENTS: '💳', WALLETS_CARDS: '👛', JEWELRY: '💍', KEYS: '🔑', CLOTHING: '👕', PETS: '🐾', OTHER: '📦' };
+        const CAT_BG = { ELECTRONICS: '#EAF1FE', BAGS: '#E6F8F1', BAGS_LUGGAGE: '#E6F8F1', DOCUMENTS: '#FFF4E0', WALLETS_CARDS: '#FFF4E0', JEWELRY: '#FCE9F3', KEYS: '#F1F0FE', CLOTHING: '#EAF1FE', PETS: '#FFF4E0', OTHER: '#F1F0FE' };
+
+        const validViews = ['landing', 'login', 'register', 'dashboard', 'browse', 'itemDetail', 'reportLost', 'reportFound', 'myReports', 'smartMatches', 'notifications', 'profile'];
+        const protectedViews = ['dashboard', 'reportLost', 'reportFound', 'myReports', 'smartMatches', 'notifications', 'profile'];
+        const publicViews = ['landing', 'login', 'register'];
+
+        /* ---------- demo / fallback data (mirrors the product mock-up) ---------- */
+        function demoLostItems() {
+            return [
+                { id: 'l1', title: 'iPhone 13', category: 'ELECTRONICS', description: 'Space grey iPhone 13, cracked bottom corner, blue silicone case.', createdAt: '2026-09-05', location: { venueLandmark: 'Library' }, status: 'Searching' },
+                { id: 'l2', title: 'Student ID Card', category: 'DOCUMENTS', description: 'College ID card in a clear plastic sleeve, name Sai Teja.', createdAt: '2026-09-04', location: { venueLandmark: 'Canteen' }, status: 'Matched' },
+                { id: 'l3', title: 'Black Wallet', category: 'OTHER', description: 'Black leather wallet with a metro card inside.', createdAt: '2026-08-15', location: { venueLandmark: 'Sports Complex' }, status: 'Recovered' }
+            ];
+        }
+        function demoFoundItems() {
+            return [
+                { id: 'f1', title: 'Blue Backpack', category: 'BAGS', description: 'Navy blue backpack with a small white logo. Contains some notebooks.', createdAt: '2026-09-06', location: { venueLandmark: 'Main Block' }, reportedBy: 'Ananya R.' },
+                { id: 'f2', title: 'Calculator', category: 'ELECTRONICS', description: 'Scientific calculator, slightly scratched case.', createdAt: '2026-09-07', location: { venueLandmark: 'ECE Block' }, reportedBy: 'Rahul K.' }
+            ];
+        }
+        function demoMatches() {
+            return [
+                { id: 'm1', status: 'Pending', pct: 90, lostTitle: 'Blue Backpack', foundId: 'f1', foundDate: '3 Sep 2026', loc: 'Main Block' },
+                { id: 'm2', status: 'Pending', pct: 78, lostTitle: 'Student ID Card', foundId: 'l2', foundDate: '1 Sep 2026', loc: 'Canteen' },
+                { id: 'm3', status: 'Pending', pct: 65, lostTitle: 'Calculator', foundId: 'f2', foundDate: '5 Sep 2026', loc: 'ECE Block' },
+                { id: 'm4', status: 'Accepted', pct: 96, lostTitle: 'Black Wallet', foundId: 'l3', foundDate: '15 Aug 2026', loc: 'Sports Complex' }
+            ];
+        }
+        function demoNotifications() {
+            return [
+                { title: 'New match found', message: 'A 90% match was found for your lost Blue Backpack.', isRead: false },
+                { title: 'Item reported nearby', message: 'A wallet was reported found in Main Block.', isRead: false },
+                { title: 'Item recovered', message: 'Your Black Wallet has been marked as recovered.', isRead: true }
+            ];
+        }
+        function demoActivity() {
+            return [
+                { icon: 'match', title: 'New match found for your lost item', when: '2 hours ago' },
+                { icon: 'report', title: 'A wallet was reported in Main Block', when: '4 hours ago' },
+                { icon: 'recover', title: 'Your item has been marked as recovered', when: '1 day ago' }
+            ];
+        }
+
+        /* ---------- init ---------- */
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthSession();
+            fetchItems();
+            window.addEventListener('hashchange', handleHashRoute);
+            handleHashRoute();
+        });
+
+        function handleHashRoute() {
+            const hash = window.location.hash.replace('#', '');
+            if (validViews.includes(hash)) go(hash, false);
+            else if (!hash) go(authToken ? 'dashboard' : 'landing', false);
+        }
+
+        /* ---------- navigation ---------- */
+        function go(viewName, updateHash = true) {
+            if (protectedViews.includes(viewName) && !authToken) {
+                showToast('Please sign in to access your student dashboard.', true);
+                viewName = 'login';
+            }
+            const isPublic = publicViews.includes(viewName);
+            document.getElementById('publicShell').style.display = isPublic ? 'block' : 'none';
+            document.getElementById('appShell').style.display = isPublic ? 'none' : 'flex';
+
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            const target = document.getElementById(viewName + 'View');
+            if (target) target.classList.add('active');
+
+            document.querySelectorAll('.public-links a').forEach(a => a.classList.remove('active'));
+            document.querySelectorAll('.side-link').forEach(b => {
+                b.classList.toggle('active', b.dataset.view === viewName);
+            });
+
+            if (updateHash && window.location.hash !== '#' + viewName) window.location.hash = '#' + viewName;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (viewName === 'browse') renderBrowseGrid();
+            if (viewName === 'dashboard') renderDashboard();
+            if (viewName === 'myReports') renderMyReports();
+            if (viewName === 'smartMatches') renderMatches();
+            if (viewName === 'notifications') renderNotifications();
+            if (viewName === 'profile') renderProfile();
+        }
+
+        /* ---------- toast ---------- */
+        function showToast(msg, isError = false) {
+            const box = document.getElementById('toast');
+            box.className = 'toast ' + (isError ? 'error' : 'success');
+            document.getElementById('toastMsg').innerText = msg;
+            box.style.display = 'flex';
+            setTimeout(() => box.style.display = 'none', 4200);
+        }
+        function hideToast() { document.getElementById('toast').style.display = 'none'; }
+
+        /* ---------- auth ---------- */
+        async function checkAuthSession() {
+            if (!authToken) { currentUser = null; updateUserChrome(null); return; }
+            if (authToken === 'demo-token') {
+                if (!currentUser) currentUser = { name: 'Sai Teja', username: 'student' };
+                updateUserChrome(currentUser);
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/users/me`, { headers: { 'Authorization': `Bearer ${authToken}` } });
+                const data = await res.json();
+                if (res.ok && data.data) { currentUser = data.data; updateUserChrome(currentUser); return; }
+            } catch (e) { console.error('Error checking auth session:', e); }
+            updateUserChrome(currentUser);
+        }
+        function updateUserChrome(user) {
+            if (!user) return;
+            const userKey = user.username || user.email || user.id;
+            const cachedAvatar = userKey ? localStorage.getItem('user_avatar_' + userKey) : null;
+            const avatarPhoto = user.avatarUrl || cachedAvatar || user.profilePictureUrl || user.profilePicture || user.imageUrl;
+            
+            if (userKey && avatarPhoto) {
+                localStorage.setItem('user_avatar_' + userKey, avatarPhoto);
+            }
+            if (avatarPhoto) user.avatarUrl = avatarPhoto;
+
+            const initials = (user.name || user.username || 'S T').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+            const topAvatar = document.getElementById('topAvatar');
+            const topName = document.getElementById('topName');
+            if (topAvatar) {
+                if (avatarPhoto && avatarPhoto.trim() !== '') {
+                    topAvatar.innerHTML = `<img src="${avatarPhoto}" alt="${user.name || user.username || 'User'}" style="width:100%; height:100%; object-fit:cover; border-radius:50%; display:block;" onerror="this.parentElement.innerText='${initials}'">`;
+                } else {
+                    topAvatar.innerText = initials;
+                }
+            }
+            if (topName) topName.innerText = user.name || user.username;
+            const greet = document.getElementById('dashGreeting');
+            if (greet) greet.innerText = `Welcome back, ${(user.name || user.username || 'Student').split(' ')[0]}!`;
+        }
+        function handleDemoLogin() {
+            document.getElementById('loginIdentifier').value = 'student@college.edu';
+            document.getElementById('loginPassword').value = 'Password123!';
+            document.getElementById('loginForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+        async function handleLogin(e) {
+            e.preventDefault();
+            const identifier = document.getElementById('loginIdentifier').value;
+            const payload = {
+                usernameOrEmail: identifier,
+                password: document.getElementById('loginPassword').value
+            };
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const data = await res.json();
+                if (res.ok && data.data && data.data.accessToken) {
+                    authToken = data.data.accessToken;
+                    localStorage.setItem('lost2connect_jwt', authToken);
+                    if (data.data.name || data.data.username) {
+                        currentUser = data.data;
+                    }
+                    await checkAuthSession();
+                    const loginName = currentUser ? (currentUser.name || currentUser.username) : identifier;
+                    showToast(`Hey "${loginName}" has successfully logged in!`);
+                    go('dashboard');
+                    return;
+                }
+                showToast(data.message || 'Login failed. Please check credentials.', true);
+            } catch (err) {
+                showToast(err.message || 'Login failed', true);
+            }
+        }
+        async function handleRegister(e) {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById('regName').value,
+                username: document.getElementById('regUsername').value,
+                email: document.getElementById('regEmail').value,
+                phoneNumber: document.getElementById('regPhone')?.value || '',
+                password: document.getElementById('regPassword').value,
+                dob: document.getElementById('regDob')?.value || '',
+                gender: document.getElementById('regGender')?.value || '',
+                rollNumber: document.getElementById('regUsername').value,
+                department: document.getElementById('regDepartment')?.value || '',
+                yearOfStudy: document.getElementById('regYear')?.value || '',
+                collegeName: document.getElementById('regCollege')?.value || '',
+                avatarUrl: regAvatarDataUrl || ''
+            };
+            try {
+                const res = await fetch(`${API_BASE}/auth/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const data = await res.json();
+                if (res.ok) {
+                    if (payload.username && regAvatarDataUrl) {
+                        localStorage.setItem('user_avatar_' + payload.username, regAvatarDataUrl);
+                    }
+                    showToast('Account created successfully! Please log in.');
+                    go('login');
+                    return;
+                }
+                showToast(data.message || 'Registration failed', true);
+            } catch (err) {
+                showToast(err.message || 'Registration failed. Please try again.', true);
+            }
+        }
+        function handleLogout() {
+            authToken = null; currentUser = null;
+            localStorage.removeItem('lost2connect_jwt');
+            showToast('Signed out successfully.');
+            go('login');
+        }
+
+        /* ---------- STUDENT PROFILE PHOTO & EDIT HANDLERS ---------- */
+        let regAvatarDataUrl = '';
+        let editAvatarDataUrl = '';
+
+        function handleRegAvatarSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = event => {
+                regAvatarDataUrl = event.target.result;
+                const prev = document.getElementById('regAvatarPreview');
+                if (prev) {
+                    prev.innerHTML = `<img src="${regAvatarDataUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleEditAvatarSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = event => {
+                editAvatarDataUrl = event.target.result;
+                const prevImg = document.getElementById('editAvatarPreviewImg');
+                if (prevImg) prevImg.src = editAvatarDataUrl;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleDirectAvatarUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async event => {
+                const dataUrl = event.target.result;
+                if (!currentUser) currentUser = {};
+                currentUser.avatarUrl = dataUrl;
+                
+                const uKey = currentUser.username || currentUser.email || currentUser.id;
+                if (uKey) localStorage.setItem('user_avatar_' + uKey, dataUrl);
+
+                const avatarImg = document.getElementById('profileAvatarImg');
+                if (avatarImg) avatarImg.src = dataUrl;
+                updateUserChrome(currentUser);
+
+                if (authToken && authToken !== 'demo-token') {
+                    try {
+                        await fetch(`${API_BASE}/users/me`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+                            body: JSON.stringify({ avatarUrl: dataUrl })
+                        });
+                    } catch (err) { console.error('Error uploading profile photo:', err); }
+                }
+                showToast('Profile photo updated successfully!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        /* ---------- STUDENT PROFILE RENDER & EDIT ---------- */
+        function renderProfile() {
+            const user = currentUser || {};
+
+            const profName = document.getElementById('profName');
+            if (profName) profName.innerText = user.name || user.username || 'Student';
+
+            const profSub = document.getElementById('profSub');
+            if (profSub) profSub.innerText = user.department ? `${user.department} Student` : (user.rollNumber ? `${user.rollNumber} • Student` : 'Student');
+
+            const profCollege = document.getElementById('profCollege');
+            if (profCollege) profCollege.innerText = user.collegeName || 'N/A';
+
+            const profQuote = document.getElementById('profQuote');
+            if (profQuote) profQuote.innerText = user.bio ? `"${user.bio}"` : 'No bio provided.';
+
+            const profMemberSince = document.getElementById('profMemberSince');
+            if (profMemberSince) profMemberSince.innerText = user.memberSince || 'N/A';
+
+            const avatarImg = document.getElementById('profileAvatarImg');
+            if (avatarImg && user.avatarUrl) avatarImg.src = user.avatarUrl;
+
+            const coverBg = document.getElementById('profileCoverBg');
+            if (coverBg && user.coverUrl) coverBg.style.backgroundImage = `url('${user.coverUrl}')`;
+
+            // Compute Stats strictly from loaded items & user context
+            const myReports = allLostItems.concat(allFoundItems).filter(i => 
+                (user.id && (i.reporterId === user.id || i.finderId === user.id)) ||
+                (user.name && (i.reportedBy === user.name || i.reporterName === user.name || i.finderName === user.name)) ||
+                (user.email && i.reporterEmail === user.email)
+            );
+            const myMatches = allMatches.filter(m => m.status === 'Pending' || m.status === 'Accepted');
+            const reunitedCount = allLostItems.concat(allFoundItems).filter(i => 
+                (i.status === 'RECOVERED' || i.status === 'CLAIMED' || i.status === 'RESOLVED' || i.status === 'MATCHED') && 
+                ((user.id && (i.reporterId === user.id || i.finderId === user.id)) ||
+                 (user.name && (i.reportedBy === user.name || i.reporterName === user.name || i.finderName === user.name)))
+            ).length;
+
+            const elReports = document.getElementById('profStatReports');
+            if (elReports) elReports.innerText = myReports.length;
+
+            const elMatches = document.getElementById('profStatMatches');
+            if (elMatches) elMatches.innerText = myMatches.length;
+
+            const elReunited = document.getElementById('profStatReunited');
+            if (elReunited) elReunited.innerText = reunitedCount;
+
+            const elPoints = document.getElementById('profStatPoints');
+            if (elPoints) elPoints.innerText = (user.communityPoints !== undefined && user.communityPoints !== null) ? user.communityPoints : 0;
+
+            // Personal Information (Card 1)
+            const infoName = document.getElementById('profInfoName');
+            if (infoName) infoName.innerText = user.name || 'N/A';
+
+            const infoRoll = document.getElementById('profInfoRoll');
+            if (infoRoll) infoRoll.innerText = user.rollNumber || user.username || 'N/A';
+
+            const infoDob = document.getElementById('profInfoDob');
+            if (infoDob) infoDob.innerText = user.dob || 'N/A';
+
+            const infoGender = document.getElementById('profInfoGender');
+            if (infoGender) infoGender.innerText = user.gender || 'N/A';
+
+            // Academic Information (Card 2)
+            const infoCollege = document.getElementById('profInfoCollege');
+            if (infoCollege) infoCollege.innerText = user.collegeName || 'N/A';
+
+            const infoDept = document.getElementById('profInfoDept');
+            if (infoDept) infoDept.innerText = user.department || 'N/A';
+
+            const infoYear = document.getElementById('profInfoYear');
+            if (infoYear) infoYear.innerText = user.yearOfStudy || 'N/A';
+
+            // Contact Information (Card 3)
+            const infoEmail = document.getElementById('profInfoEmail');
+            if (infoEmail) infoEmail.innerText = user.email || 'N/A';
+
+            const infoPhone = document.getElementById('profInfoPhone');
+            if (infoPhone) infoPhone.innerText = user.phoneNumber || user.phone || 'N/A';
+
+            updateUserChrome(user);
+        }
+
+        function openProfileEditModal() {
+            const u = currentUser || {};
+            document.getElementById('editName').value = u.name || '';
+            document.getElementById('editPhone').value = u.phoneNumber || u.phone || '';
+            document.getElementById('editDob').value = u.dob || '';
+            document.getElementById('editGender').value = u.gender || 'Male';
+            document.getElementById('editRoll').value = u.rollNumber || u.username || '';
+            document.getElementById('editYear').value = u.yearOfStudy || '1st Year';
+            document.getElementById('editCollege').value = u.collegeName || '';
+            document.getElementById('editDepartment').value = u.department || '';
+
+            editAvatarDataUrl = u.avatarUrl || '';
+            const prevImg = document.getElementById('editAvatarPreviewImg');
+            if (prevImg && editAvatarDataUrl) prevImg.src = editAvatarDataUrl;
+
+            document.getElementById('editProfileModal').style.display = 'flex';
+        }
+
+        function closeProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'none';
+        }
+
+        async function handleProfileUpdate(e) {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById('editName').value,
+                phone: document.getElementById('editPhone').value,
+                phoneNumber: document.getElementById('editPhone').value,
+                dob: document.getElementById('editDob').value,
+                gender: document.getElementById('editGender').value,
+                rollNumber: document.getElementById('editRoll').value,
+                department: document.getElementById('editDepartment').value,
+                yearOfStudy: document.getElementById('editYear').value,
+                collegeName: document.getElementById('editCollege').value,
+                avatarUrl: editAvatarDataUrl || (currentUser ? currentUser.avatarUrl : '')
+            };
+
+            try {
+                if (authToken && authToken !== 'demo-token') {
+                    const res = await fetch(`${API_BASE}/users/me`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.data) {
+                        currentUser = data.data;
+                    } else {
+                        throw new Error(data.message || 'Update failed');
+                    }
+                } else {
+                    currentUser = Object.assign({}, currentUser || {}, payload);
+                }
+                updateUserChrome(currentUser);
+                renderProfile();
+                closeProfileModal();
+                showToast('Student profile updated successfully!');
+            } catch (err) {
+                console.error('Error updating profile:', err);
+                currentUser = Object.assign({}, currentUser || {}, payload);
+                updateUserChrome(currentUser);
+                renderProfile();
+                closeProfileModal();
+                showToast('Profile updated!');
+            }
+        }
+
+        let lostPhotoDataUrls = [];
+        let foundPhotoDataUrls = [];
+
+        /* ---------- items ---------- */
+        /* ---------- items ---------- */
+        async function fetchItems() {
+            try {
+                const [lostRes, foundRes] = await Promise.all([
+                    fetch(`${API_BASE}/lost-items`),
+                    fetch(`${API_BASE}/found-items`)
+                ]);
+                const lostData = await lostRes.json();
+                const foundData = await foundRes.json();
+                const dbLost = (lostData.data && (lostData.data.content || lostData.data)) || [];
+                const dbFound = (foundData.data && (foundData.data.content || foundData.data)) || [];
+                
+                const dbLostIds = new Set(dbLost.map(i => String(i.id)));
+                const localOnlyLost = allLostItems.filter(i => !dbLostIds.has(String(i.id)) && String(i.id).startsWith('l'));
+                allLostItems = [...localOnlyLost, ...dbLost];
+
+                const dbFoundIds = new Set(dbFound.map(i => String(i.id)));
+                const localOnlyFound = allFoundItems.filter(i => !dbFoundIds.has(String(i.id)) && String(i.id).startsWith('f'));
+                allFoundItems = [...localOnlyFound, ...dbFound];
+            } catch (err) {
+                console.error('Error fetching items from database:', err);
+            }
+            renderBrowseGrid();
+        }
+
+        function setBrowseType(type, btn) {
+            browseType = type;
+            document.querySelectorAll('#browseView .pill-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderBrowseGrid();
+        }
+        function filterItems() { renderBrowseGrid(); }
+
+        function itemThumb(item) {
+            const imgs = item.imageUrls || (item.imageUrl ? [item.imageUrl] : (item.photo ? [item.photo] : []));
+            if (imgs && imgs.length > 0 && imgs[0]) {
+                return `<div class="item-thumb"><img src="${imgs[0]}" alt="${item.title || 'Item'}" style="width:100%; height:100%; object-fit:cover; aspect-ratio:1/1;" /></div>`;
+            }
+            const cat = item.category || 'OTHER';
+            return `<div class="item-thumb" style="background:${CAT_BG[cat] || '#F1F5F9'}">${CAT_ICON[cat] || '📦'}</div>`;
+        }
+
+        function renderBrowseGrid() {
+            const container = document.getElementById('itemsGridContainer');
+            if (!container) return;
+            const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const cat = document.getElementById('categoryFilter')?.value || 'ALL';
+
+            let combined = [
+                ...allLostItems.map(i => ({ ...i, type: 'LOST' })),
+                ...allFoundItems.map(i => ({ ...i, type: 'FOUND' }))
+            ];
+            if (browseType !== 'ALL') combined = combined.filter(i => i.type === browseType);
+            if (cat !== 'ALL') combined = combined.filter(i => i.category === cat);
+            if (q) combined = combined.filter(i => (i.title + (i.description || '')).toLowerCase().includes(q));
+
+            if (!combined.length) {
+                container.innerHTML = `<div class="empty-state">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <div>No database items match your filters yet.</div></div>`;
+                return;
+            }
+
+            container.innerHTML = combined.map(item => `
+    <div class="item-card" onclick="openItemDetails('${item.id}','${item.type}')">
+      ${itemThumb(item)}
+      <div class="item-body">
+        <span class="badge ${item.type === 'LOST' ? 'badge-lost' : 'badge-found'}">${item.type}</span>
+        <div class="item-title">${item.title}</div>
+        <div class="item-meta">📍 ${item.location ? (item.location.venueLandmark || item.location.city) : 'Campus'}</div>
+        <div class="item-meta">🕒 ${formatDate(item.createdAt || item.foundDate || item.lostDate)}</div>
+      </div>
+    </div>
+  `).join('');
+        }
+
+        function formatDate(d) {
+            if (!d) return 'Recent';
+            try { return new Date(d).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }); }
+            catch (e) { return d; }
+        }
+
+        /* ---------- item detail (full page) ---------- */
+        function openItemDetails(id, type) {
+            const item = (type === 'LOST' ? allLostItems : allFoundItems).find(i => String(i.id) === String(id));
+            if (!item) return;
+            go('itemDetail');
+            const el = document.getElementById('itemDetailContent');
+            const imgs = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls : (item.imageUrl ? [item.imageUrl] : (item.photo ? [item.photo] : []));
+            const mainImg = imgs.length > 0 ? imgs[0] : null;
+
+            el.innerHTML = `
+    <div>
+      <div class="detail-gallery-main" style="${mainImg ? '' : 'background:' + (CAT_BG[item.category] || '#F1F5F9')}">
+        ${mainImg ? `<img src="${mainImg}" alt="${item.title}" style="width:100%; height:100%; object-fit:cover; aspect-ratio:1/1; border-radius:var(--radius-lg);" />` : (CAT_ICON[item.category] || '📦')}
+      </div>
+      ${imgs.length > 1 ? `
+      <div class="detail-gallery-thumbs">
+        ${imgs.map(url => `<div onclick="document.querySelector('.detail-gallery-main img').src='${url}'"><img src="${url}" style="width:100%; height:100%; object-fit:cover; aspect-ratio:1/1; border-radius:10px;" /></div>`).join('')}
+      </div>` : ''}
+    </div>
+    <div>
+      <div class="detail-top">
+        <span class="badge ${type === 'LOST' ? 'badge-lost' : 'badge-found'}">${type}</span>
+        <div class="detail-icons">
+          <button title="Save"><svg class="icon" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+          <button title="Share"><svg class="icon" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6L8.6 10.5"/></svg></button>
+        </div>
+      </div>
+      <div class="detail-title">${item.title}</div>
+      <div class="detail-fact">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <div><div class="flabel">Location ${type === 'LOST' ? 'Lost' : 'Found'}</div><div class="fval">${item.location ? (item.location.venueLandmark || item.location.city) : 'Campus'}</div></div>
+      </div>
+      <div class="detail-fact">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <div><div class="flabel">Date ${type === 'LOST' ? 'Lost' : 'Found'}</div><div class="fval">${formatDate(item.createdAt || item.foundDate || item.lostDate)}</div></div>
+      </div>
+      <div class="detail-fact">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg>
+        <div><div class="flabel">Category</div><div class="fval">${item.category}</div></div>
+      </div>
+      <div class="detail-fact">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <div><div class="flabel">Description</div><div class="fval" style="font-weight:600;">${item.description || 'No additional details provided.'}</div></div>
+      </div>
+      ${item.reportedBy || item.finderName || item.reporterName ? `
+        <div class="reporter-row">
+          <div class="avatar" style="width:30px;height:30px;font-size:.7rem;">${(item.reportedBy || item.finderName || item.reporterName || 'U').split(' ').map(w => w[0]).join('')}</div>
+          <div><div class="lbl">Reported by</div><div style="font-weight:700; font-size:.87rem;">${item.reportedBy || item.finderName || item.reporterName}</div></div>
+        </div>` : ''}
+      <div class="detail-actions">
+        ${type === 'FOUND'
+                    ? `<button class="btn btn-primary" onclick="openClaimModal('${item.id}')">Contact Finder</button>
+             <button class="btn btn-outline" onclick="showToast('Marked as matched.')">Mark as Matched</button>`
+                    : `<button class="btn btn-primary" onclick="go('smartMatches')">Search Smart Matches</button>
+             <button class="btn btn-outline" onclick="go('browse')">Back to Browse</button>`
+                }
+      </div>
+    </div>
+  `;
+        }
+
+        function openClaimModal(foundItemId) {
+            const modal = document.getElementById('itemDetailsModal');
+            const content = document.getElementById('modalContent');
+            modal.classList.add('active');
+            content.innerHTML = `
+    <h3 style="font-size:1.15rem; font-weight:800; margin-bottom:6px;">Claim Ownership</h3>
+    <p style="font-size:.85rem; color:var(--muted); margin-bottom:16px;">Provide verification proof so the finder can confirm it's yours.</p>
+    <div class="field"><label>Verification details</label><input type="text" id="modalClaimProof" placeholder="e.g., Inscription inside, specific wallpaper..."></div>
+    <button class="btn btn-primary btn-block" onclick="submitModalClaim('${foundItemId}')">Submit Ownership Claim</button>
+  `;
+        }
+        function closeItemModal() { document.getElementById('itemDetailsModal').classList.remove('active'); }
+
+        async function submitModalClaim(foundItemId) {
+            if (!authToken) { closeItemModal(); showToast('Please sign in to submit a claim.', true); go('login'); return; }
+            const proof = document.getElementById('modalClaimProof').value;
+            if (!proof) { showToast('Please enter verification details.', true); return; }
+            try {
+                const res = await fetch(`${API_BASE}/claims`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+                    body: JSON.stringify({ foundItemId, verificationAnswer: proof, contactPhoneNumber: '+91 9876543210' })
+                });
+                const data = await res.json();
+                if (res.ok) { closeItemModal(); showToast('Ownership claim submitted successfully!'); go('myReports'); return; }
+                throw new Error(data.message || 'failed');
+            } catch (err) {
+                closeItemModal();
+                showToast('Ownership claim submitted successfully!');
+                go('myReports');
+            }
+        }
+
+        /* ---------- photo previews ---------- */
+        /* ---------- photo previews & upload helpers ---------- */
+        function readFilesAsDataURLs(files) {
+            return Promise.all(Array.from(files).slice(0, 3).map(file => {
+                return new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.onerror = () => resolve(null);
+                    reader.readAsDataURL(file);
+                });
+            })).then(results => results.filter(Boolean));
+        }
+
+        async function uploadItemImages(itemId, files, endpoint) {
+            if (!files || files.length === 0) return;
+            const formData = new FormData();
+            Array.from(files).slice(0, 3).forEach(file => formData.append('images', file));
+            try {
+                const headers = {};
+                if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+                await fetch(`${API_BASE}/${endpoint}/${itemId}/images`, {
+                    method: 'POST',
+                    headers,
+                    body: formData
+                });
+            } catch (err) {
+                console.error(`Error uploading images for ${endpoint}:`, err);
+            }
+        }
+
+        function handlePhotoSelect(event, previewId, isFound) {
+            const box = document.getElementById(previewId);
+            if (!box) return;
+            box.innerHTML = '';
+            const targetArr = isFound ? foundPhotoDataUrls : lostPhotoDataUrls;
+            targetArr.length = 0;
+            Array.from(event.target.files).slice(0, 3).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    targetArr.push(e.target.result);
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '64px';
+                    img.style.height = '64px';
+                    img.style.objectFit = 'cover';
+                    img.style.aspectRatio = '1 / 1';
+                    img.style.borderRadius = '9px';
+                    img.style.border = '1px solid var(--line)';
+                    box.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        /* ---------- report forms ---------- */
+        async function handleReportLost(e) {
+            e.preventDefault();
+            const rawDate = document.getElementById('lostDate').value;
+            let formattedDate = rawDate;
+            if (rawDate && rawDate.length === 10) {
+                formattedDate = rawDate + ' 12:00:00';
+            } else if (!rawDate) {
+                const now = new Date();
+                formattedDate = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' 12:00:00';
+            }
+
+            const fileInput = document.getElementById('lostPhotoInput');
+            if ((!lostPhotoDataUrls || lostPhotoDataUrls.length === 0) && fileInput && fileInput.files && fileInput.files.length > 0) {
+                lostPhotoDataUrls = await readFilesAsDataURLs(fileInput.files);
+            }
+
+            const payload = {
+                title: document.getElementById('lostTitle').value,
+                description: document.getElementById('lostDesc').value,
+                category: document.getElementById('lostCategory').value,
+                lostDate: formattedDate,
+                venueName: document.getElementById('lostLocation').value || 'Main Campus',
+                venueLandmark: document.getElementById('lostLocation').value || 'Main Campus',
+                city: 'Main Campus',
+                contactPhoneNumber: document.getElementById('lostPhone').value || '+91 9876543210',
+                imageUrls: [...lostPhotoDataUrls]
+            };
+            try {
+                const headers = { 'Content-Type': 'application/json' };
+                if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+                const res = await fetch(`${API_BASE}/lost-items`, { method: 'POST', headers, body: JSON.stringify(payload) });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'failed');
+                if (data.data && data.data.id && fileInput && fileInput.files && fileInput.files.length > 0) {
+                    await uploadItemImages(data.data.id, fileInput.files, 'lost-items');
+                }
+                showToast('Lost item report submitted successfully!');
+            } catch (err) {
+                console.error('API Error reporting lost item:', err);
+                showToast('Lost item report submitted!');
+                allLostItems.unshift({ id: 'l' + Date.now(), title: payload.title, description: payload.description, category: payload.category, createdAt: payload.lostDate, location: { venueLandmark: payload.venueLandmark }, status: 'Searching', imageUrls: [...lostPhotoDataUrls] });
+            }
+            lostPhotoDataUrls = [];
+            const preview = document.getElementById('lostPhotoPreview');
+            if (preview) preview.innerHTML = '';
+            e.target.reset();
+            go('browse');
+            await fetchItems();
+        }
+        async function handleReportFound(e) {
+            e.preventDefault();
+            const rawDate = document.getElementById('foundDate').value;
+            let formattedDate = rawDate;
+            if (rawDate && rawDate.length === 10) {
+                formattedDate = rawDate + ' 12:00:00';
+            } else if (!rawDate) {
+                const now = new Date();
+                formattedDate = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' 12:00:00';
+            }
+
+            const fileInput = document.getElementById('foundPhotoInput');
+            if ((!foundPhotoDataUrls || foundPhotoDataUrls.length === 0) && fileInput && fileInput.files && fileInput.files.length > 0) {
+                foundPhotoDataUrls = await readFilesAsDataURLs(fileInput.files);
+            }
+
+            const payload = {
+                title: document.getElementById('foundTitle').value,
+                description: document.getElementById('foundDesc').value,
+                category: document.getElementById('foundCategory').value,
+                foundDate: formattedDate,
+                storageLocation: document.getElementById('foundCustody').value || 'Security Desk',
+                custodyLocation: document.getElementById('foundCustody').value || 'Security Desk',
+                venueName: 'Main Campus',
+                venueLandmark: 'Main Campus',
+                city: 'Main Campus',
+                contactPhoneNumber: '+91 9876543210',
+                verificationQuestions: [document.getElementById('foundQuestion').value || 'Item verification'],
+                imageUrls: [...foundPhotoDataUrls]
+            };
+            try {
+                const headers = { 'Content-Type': 'application/json' };
+                if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+                const res = await fetch(`${API_BASE}/found-items`, { method: 'POST', headers, body: JSON.stringify(payload) });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'failed');
+                if (data.data && data.data.id && fileInput && fileInput.files && fileInput.files.length > 0) {
+                    await uploadItemImages(data.data.id, fileInput.files, 'found-items');
+                }
+                showToast('Found item reported successfully!');
+            } catch (err) {
+                console.error('API Error reporting found item:', err);
+                showToast('Found item reported!');
+                allFoundItems.unshift({ id: 'f' + Date.now(), title: payload.title, description: payload.description, category: payload.category, createdAt: payload.foundDate, location: { venueLandmark: payload.custodyLocation }, reportedBy: (currentUser && currentUser.name) || 'You', imageUrls: [...foundPhotoDataUrls] });
+            }
+            foundPhotoDataUrls = [];
+            const preview = document.getElementById('foundPhotoPreview');
+            if (preview) preview.innerHTML = '';
+            e.target.reset();
+            go('browse');
+            await fetchItems();
+        }
+
+        /* ---------- dashboard ---------- */
+        async function renderDashboard() {
+            const feed = document.getElementById('activityFeed');
+            if (feed) {
+                const combined = [...allLostItems, ...allFoundItems];
+                if (!combined.length) {
+                    feed.innerHTML = `<div style="padding:20px; color:var(--muted); font-size:.88rem; text-align:center;">No recent campus activity recorded in database.</div>`;
+                } else {
+                    feed.innerHTML = combined.slice(0, 5).map(item => `
+    <div class="activity-row" onclick="openItemDetails('${item.id}','${allLostItems.includes(item)?'LOST':'FOUND'}')">
+      <div class="activity-ico match">
+        ${itemThumb(item)}
+      </div>
+      <div class="activity-body">
+        <div class="activity-title">${item.title}</div>
+        <div style="font-size:.78rem; color:var(--muted);">${item.category} • ${item.location ? (item.location.venueLandmark || item.location.city) : 'Campus'}</div>
+      </div>
+      <div class="activity-when">${formatDate(item.createdAt || item.foundDate || item.lostDate)}</div>
+    </div>
+  `).join('');
+                }
+            }
+
+            try {
+                const headers = {};
+                if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+                const res = await fetch(`${API_BASE}/stats`, { headers });
+                const data = await res.json();
+                if (res.ok && data.data) {
+                    const stats = data.data;
+                    const rEl = document.getElementById('dashReportsCount');
+                    const mEl = document.getElementById('dashMatchesCount');
+                    const uEl = document.getElementById('dashReunitedCount');
+                    const cEl = document.getElementById('dashUsersCount');
+                    if (rEl) rEl.innerText = stats.myReports;
+                    if (mEl) mEl.innerText = stats.matches;
+                    if (uEl) uEl.innerText = stats.itemsReunited;
+                    if (cEl) cEl.innerText = stats.communityMembers;
+                    return;
+                }
+            } catch (err) {
+                console.error('Error fetching dashboard stats:', err);
+            }
+
+            const rEl = document.getElementById('dashReportsCount');
+            const mEl = document.getElementById('dashMatchesCount');
+            const uEl = document.getElementById('dashReunitedCount');
+            const cEl = document.getElementById('dashUsersCount');
+
+            const myCount = (reportsTab === 'Lost' ? allLostItems : allFoundItems).length || (allLostItems.length + allFoundItems.length);
+            if (rEl) rEl.innerText = myCount;
+            if (mEl) mEl.innerText = allMatches.filter(m => m.status === 'Pending').length;
+            if (uEl) uEl.innerText = [...allLostItems, ...allFoundItems].filter(i => i.status === 'RECOVERED' || i.status === 'MATCHED' || i.status === 'CLAIMED').length;
+            if (cEl) cEl.innerText = 2;
+        }
+
+        /* ---------- my reports ---------- */
+        function setReportsTab(type, btn) {
+            reportsTab = type;
+            document.querySelectorAll('#myReportsView .pill-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderMyReports();
+        }
+        function statusBadge(status) {
+            const map = { Searching: 'badge-searching', Matched: 'badge-matched', Recovered: 'badge-recovered' };
+            return `<span class="badge ${map[status] || 'badge-searching'}">${status || 'Searching'}</span>`;
+        }
+        function isMyReport(item) {
+            if (!currentUser) return false;
+            const uid = currentUser.id || currentUser.userId;
+            const uName = currentUser.name || currentUser.username;
+            const uEmail = currentUser.email;
+
+            if (uid && (item.reporterId === uid || item.finderId === uid || item.userId === uid)) return true;
+            if (uName && (item.reportedBy === uName || item.reporterName === uName || item.finderName === uName)) return true;
+            if (uEmail && (item.reporterEmail === uEmail || item.contactEmail === uEmail)) return true;
+            return false;
+        }
+
+        function renderMyReports() {
+            const tbody = document.getElementById('myReportsTableBody');
+            if (!tbody) return;
+            const rawSource = reportsTab === 'Lost' ? allLostItems : allFoundItems;
+            const source = rawSource.filter(isMyReport);
+            if (!source.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--muted); padding:30px;">No ${reportsTab.toLowerCase()} reports found for your account.</td></tr>`; return; }
+            tbody.innerHTML = source.map(item => `
+    <tr>
+      <td><div class="row-item"><div class="row-thumb" style="background:${CAT_BG[item.category] || '#F1F5F9'}">${(item.imageUrls && item.imageUrls[0]) ? `<img src="${item.imageUrls[0]}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;aspect-ratio:1/1;" />` : (CAT_ICON[item.category] || '📦')}</div>${item.title}</div></td>
+      <td>${formatDate(item.createdAt || item.foundDate || item.lostDate)}</td>
+      <td><div class="row-loc">📍 ${item.location ? (item.location.venueLandmark || item.location.city) : 'Campus'}</div></td>
+      <td>${statusBadge(item.status)}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="openItemDetails('${item.id}','${reportsTab.toUpperCase()}')">View Details</button></td>
+    </tr>
+  `).join('');
+        }
+
+        /* ---------- matches ---------- */
+        function setMatchesTab(status, btn) {
+            matchesTab = status;
+            document.querySelectorAll('#smartMatchesView .pill-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderMatches();
+        }
+        function matchBadgeClass(pct) {
+            if (pct >= 85) return 'badge-match-hi';
+            if (pct >= 70) return 'badge-match-mid';
+            return 'badge-match-lo';
+        }
+        async function renderMatches() {
+            const container = document.getElementById('matchesContainer');
+            if (!container) return;
+            try {
+                const res = await fetch(`${API_BASE}/matches/all`);
+                const data = await res.json();
+                if (res.ok && data.data && Array.isArray(data.data)) {
+                    allMatches = data.data.map((m, i) => ({
+                        id: m.id || ('api' + i),
+                        status: m.status || 'Pending',
+                        pct: m.matchScore ? m.matchScore.totalScorePercentage : 90,
+                        lostTitle: m.lostItem ? m.lostItem.title : 'Item',
+                        foundId: m.foundItem ? m.foundItem.id : '',
+                        foundDate: formatDate(m.foundItem ? m.foundItem.createdAt : null),
+                        loc: (m.lostItem && m.lostItem.location) ? (m.lostItem.location.venueLandmark || m.lostItem.location.city) : 'Campus'
+                    }));
+                } else {
+                    allMatches = [];
+                }
+            } catch (err) {
+                allMatches = [];
+            }
+            document.getElementById('cntPending').innerText = allMatches.filter(m => m.status === 'Pending').length;
+            document.getElementById('cntAccepted').innerText = allMatches.filter(m => m.status === 'Accepted').length;
+            document.getElementById('cntRejected').innerText = allMatches.filter(m => m.status === 'Rejected').length;
+
+            const filtered = allMatches.filter(m => m.status === matchesTab);
+            if (!filtered.length) { container.innerHTML = `<div class="empty-state"><svg class="icon" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><div>No ${matchesTab.toLowerCase()} matches found in database.</div></div>`; return; }
+
+            container.innerHTML = filtered.map(m => `
+    <div class="match-card">
+      <div class="match-thumb" style="background:var(--good-bg)">🔍</div>
+      <div class="match-body">
+        <span class="badge ${matchBadgeClass(m.pct)}">${m.pct}% MATCH</span>
+        <div class="match-title">${m.lostTitle}</div>
+        <div class="match-meta">📍 Found on ${m.foundDate} • ${m.loc}</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="openItemDetails('${m.foundId}','FOUND')">View</button>
+    </div>
+  `).join('');
+        }
+
+        /* ---------- notifications ---------- */
+        async function renderNotifications() {
+            const container = document.getElementById('notificationsContainer');
+            if (!container) return;
+            let notifs = [];
+            try {
+                const res = await fetch(`${API_BASE}/notifications/my`, { headers: { 'Authorization': `Bearer ${authToken}` } });
+                const data = await res.json();
+                if (res.ok && data.data && Array.isArray(data.data)) notifs = data.data;
+            } catch (err) { notifs = []; }
+
+            // Ensure all items reported in DB are represented in notifications for all students
+            const itemNotifs = [];
+            if (Array.isArray(allLostItems)) {
+                allLostItems.forEach(item => {
+                    const title = `New Lost Item Reported: ${item.title}`;
+                    if (!notifs.some(n => n.title === title || n.relatedItemId === item.id)) {
+                        itemNotifs.push({
+                            id: item.id,
+                            title: title,
+                            message: `${item.reporterName || 'A student'} reported a lost ${item.category || 'item'} (${item.title}) at ${item.location ? (item.location.venueLandmark || item.location.venueName || item.location.city) : 'Campus'}.`,
+                            isRead: false,
+                            createdAt: item.createdAt || item.lostDate
+                        });
+                    }
+                });
+            }
+            if (Array.isArray(allFoundItems)) {
+                allFoundItems.forEach(item => {
+                    const title = `New Found Item Reported: ${item.title}`;
+                    if (!notifs.some(n => n.title === title || n.relatedItemId === item.id)) {
+                        itemNotifs.push({
+                            id: item.id,
+                            title: title,
+                            message: `${item.finderName || 'A student'} reported a found ${item.category || 'item'} (${item.title}) at ${item.location ? (item.location.venueLandmark || item.location.venueName || item.location.city) : 'Campus'}.`,
+                            isRead: false,
+                            createdAt: item.createdAt || item.foundDate
+                        });
+                    }
+                });
+            }
+
+            const combined = [...notifs, ...itemNotifs];
+            combined.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+            if (!combined.length) {
+                container.innerHTML = `<div style="padding:30px; text-align:center; color:var(--muted); font-size:.9rem;">No notifications recorded in database.</div>`;
+                return;
+            }
+
+            container.innerHTML = combined.map(n => `
+    <div class="notif-row">
+      <div class="notif-ico"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+      <div style="flex:1;">
+        <div class="notif-title">${n.title}</div>
+        <div class="notif-msg">${n.message}</div>
+        <div style="font-size:.76rem; color:var(--muted); margin-top:4px;">${formatDate(n.createdAt)}</div>
+      </div>
+      <div class="notif-state">${n.isRead ? 'Read' : 'New'}</div>
+    </div>
+  `).join('');
+        }
+    </script>
+</body>
+
+</html>

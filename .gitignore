@@ -1,0 +1,24 @@
+# Build target output
+target/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# Logs
+*.log
+
+# Uploaded media assets
+uploads/
+
+# Firebase credentials (do not push secrets to GitHub)
+serviceAccountKey.json
+src/main/resources/serviceAccountKey.json
